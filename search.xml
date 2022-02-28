@@ -164,11 +164,11 @@
     
     
     <entry>
-      <title>一次长亭面经_路还很长</title>
-      <link href="/2021/05/28/%E4%B8%80%E6%AC%A1%E9%95%BF%E4%BA%AD%E9%9D%A2%E7%BB%8F_%E8%B7%AF%E8%BF%98%E5%BE%88%E9%95%BF/"/>
-      <url>/2021/05/28/%E4%B8%80%E6%AC%A1%E9%95%BF%E4%BA%AD%E9%9D%A2%E7%BB%8F_%E8%B7%AF%E8%BF%98%E5%BE%88%E9%95%BF/</url>
+      <title>一次CT面经</title>
+      <link href="/2021/05/28/%E4%B8%80%E6%AC%A1CT%E9%9D%A2%E7%BB%8F/"/>
+      <url>/2021/05/28/%E4%B8%80%E6%AC%A1CT%E9%9D%A2%E7%BB%8F/</url>
       
-        <content type="html"><![CDATA[<ol><li>印象深刻的一次漏洞挖掘。可以说说攻防项目里所做的事情。</li><li>是否接触过做过红队。</li><li>最近在做什么类型的项目。</li><li>最近在学习什么方向的内容。</li><li>SQL注入的类型。常用的注入方法。</li><li>绕过根据语义解析恶意字符的waf的方法。</li><li>报错注入的函数有哪些。</li><li>已经拿下Webshell，是MySQL数据库，要往里写文件除了要知道物理路径还需要什么条件。</li><li>MySQL高版本和低版本的利用方式有哪些差别。</li><li>延时注入MySQL数据库除了SLEEP()还有什么函数可以实现。</li><li>SQLServer提权除了XP_CMDSHELL组件还有什么方法。</li><li>注入的修复方式。</li><li>Mybatis数据库预编译时占位符是什么。</li><li>XSS原理。</li><li>Dom XSS原理，具体怎么实现的。</li><li>在开启了Httponly的情况下，怎么去利用XSS。</li><li>在进行命令执行等攻击的时候页面上没有回显怎么办，假如不能出网的话又该怎么办。</li><li>Redis主从复制漏洞的这个主从复制原理是什么。</li><li>CSRF修复的方式。</li><li>假如CSRF加入了Referer头验证，怎么去绕过。</li><li>Shiro的漏洞都有复现过吗。</li><li>Shiro不同版本之间的漏洞它们本质上的区别是什么。</li><li>Shiro反序列化漏洞利用的加密算法是什么。</li><li>Shiro反序列化漏洞的原理，处理Cookie的流程。</li><li>高版本的Shiro用的什么加解密模式。</li><li>Mimikatz是从系统的什么进程中读的Hash。</li><li>假如读取的Hash没有暴破出来该怎么办。</li><li>PTH研究过没有。</li><li>NTLM协议的认证流程。</li><li>Liunx权限维持有哪些方法。</li><li>Linux提权的方法有哪些。</li><li>代码审计做过哪些项目，Java的代审有接触过吗。</li><li>PHP文件包含用的函数名称。</li><li>利用PHP写的CMS漏洞研究过哪些。</li><li>应急响应有做过哪些项目，详细的需要检查什么配置。</li><li>3389登录成功日志的ID是多少。</li><li>内存马的具体排查流程，溯源的流程。</li><li>安卓测试的项目做过没。</li><li>怎么脱壳。</li><li>一般怎么进行安卓的测试。</li></ol>]]></content>
+        <content type="html"><![CDATA[<ol><li>印象深刻的一次漏洞挖掘。可以说说攻防项目里所做的事情。</li><li>是否接触过做过红队。</li><li>最近在做什么类型的项目。</li><li>最近在学习什么方向的内容。</li><li>SQL注入的类型。常用的注入方法。</li><li>绕过根据语义解析恶意字符的waf的方法。</li><li>报错注入的函数有哪些。</li><li>已经拿下Webshell，是MySQL数据库，要往里写文件除了要知道物理路径还需要什么条件。</li><li>MySQL高版本和低版本的利用方式有哪些差别。</li><li>延时注入MySQL数据库除了SLEEP()还有什么函数可以实现。</li><li>SQLServer提权除了XP_CMDSHELL组件还有什么方法。</li><li>注入的修复方式。</li><li>Mybatis数据库预编译时占位符是什么。</li><li>XSS原理。</li><li>Dom XSS原理，具体怎么实现的。</li><li>在开启了Httponly的情况下，怎么去利用XSS。</li><li>在进行命令执行等攻击的时候页面上没有回显怎么办，假如不能出网的话又该怎么办。</li><li>Redis主从复制漏洞的这个主从复制原理是什么。</li><li>CSRF修复的方式。</li><li>假如CSRF加入了Referer头验证，怎么去绕过。</li><li>Shiro的漏洞都有复现过吗。</li><li>Shiro不同版本之间的漏洞它们本质上的区别是什么。</li><li>Shiro反序列化漏洞利用的加密算法是什么。</li><li>Shiro反序列化漏洞的原理，处理Cookie的流程。</li><li>高版本的Shiro用的什么加解密模式。</li><li>Mimikatz是从系统的什么进程中读的Hash。</li><li>假如读取的Hash没有暴破出来该怎么办。</li><li>PTH研究过没有。</li><li>NTLM协议的认证流程。</li><li>Liunx权限维持有哪些方法。</li><li>Linux提权的方法有哪些。</li><li>代码审计做过哪些项目，Java的代审有接触过吗。</li><li>PHP文件包含用的函数名称。</li><li>利用PHP写的CMS漏洞研究过哪些。</li><li>应急响应有做过哪些项目，详细的需要检查什么配置。</li><li>3389登录成功日志的ID是多少。</li><li>内存马的具体排查流程，溯源的流程。</li><li>安卓测试的项目做过没。</li><li>怎么脱壳。</li><li>一般怎么进行安卓的测试。</li></ol><p>路还很长~</p>]]></content>
       
       
       <categories>
