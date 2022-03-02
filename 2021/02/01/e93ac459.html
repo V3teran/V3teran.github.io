@@ -1,0 +1,371 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>XXE | V3teran's blog</title><meta name="keywords" content="OOB,XML,外部实体,协议"><meta name="author" content="V3teran"><meta name="copyright" content="V3teran"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="简单记录一下XXE的学习过程。 XML用来传输和存储数据的一种可扩展标记语言。XML和HTML的区别：前者为了传输和存储数据，两个不同的系统可以通过XML进行通信和交换数据，不同的编程语言对XML的解析程度不同；后者是用来显示数据的，更注重外观。 整个XML大致分为：文档的声明、元素的定义和元素的内容。 DTD文档类型定义，一种XML约束模式语言，由元素类型声明、属性声明、实体声明、记号声明等构成">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XXE">
+<meta property="og:url" content="https://v3teran.github.io/2021/02/01/e93ac459.html">
+<meta property="og:site_name" content="V3teran&#39;s blog">
+<meta property="og:description" content="简单记录一下XXE的学习过程。 XML用来传输和存储数据的一种可扩展标记语言。XML和HTML的区别：前者为了传输和存储数据，两个不同的系统可以通过XML进行通信和交换数据，不同的编程语言对XML的解析程度不同；后者是用来显示数据的，更注重外观。 整个XML大致分为：文档的声明、元素的定义和元素的内容。 DTD文档类型定义，一种XML约束模式语言，由元素类型声明、属性声明、实体声明、记号声明等构成">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402200352.jpg">
+<meta property="article:published_time" content="2021-02-01T12:12:00.000Z">
+<meta property="article:modified_time" content="2022-03-02T01:01:20.740Z">
+<meta property="article:author" content="V3teran">
+<meta property="article:tag" content="OOB">
+<meta property="article:tag" content="XML">
+<meta property="article:tag" content="外部实体">
+<meta property="article:tag" content="协议">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402200352.jpg"><link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210204173816.png"><link rel="canonical" href="https://v3teran.github.io/2021/02/01/e93ac459"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?73d3a03f02aa81722a03a54ce37d7aac";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=UA-221762089-2"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'UA-221762089-2');
+</script><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#121212","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'XXE',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-03-02 09:01:20'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/lalala.css"><link rel="stylesheet" href="https://at.alicdn.com/t/font_2364346_8smao36j8yr.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"><script src="/live2d-widget/autoload.js"></script><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zfour/Butterfly-card-history/baiduhistory/css/main.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.0.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210204173845.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">38</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402200352.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">V3teran's blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">XXE</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-02-01T12:12:00.000Z" title="发表于 2021-02-01 20:12:00">2021-02-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-03-02T01:01:20.740Z" title="更新于 2022-03-02 09:01:20">2022-03-02</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Web%E5%AE%89%E5%85%A8/">Web安全</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>8分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="XXE"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>简单记录一下XXE的学习过程。</p>
+<h1 id="XML"><a href="#XML" class="headerlink" title="XML"></a><strong>XML</strong></h1><p>用来传输和存储数据的一种可扩展标记语言。XML和HTML的区别：前者为了传输和存储数据，两个不同的系统可以通过XML进行通信和交换数据，不同的编程语言对XML的解析程度不同；后者是用来显示数据的，更注重外观。</p>
+<p>整个XML大致分为：文档的声明、元素的定义和元素的内容。</p>
+<h2 id="DTD"><a href="#DTD" class="headerlink" title="DTD"></a><strong>DTD</strong></h2><p>文档类型定义，一种XML约束模式语言，由元素类型声明、属性声明、实体声明、记号声明等构成。</p>
+<p>每个XML文件可以携带一个自身格式的描述，可以进行内部声明和外部引用，不同组织的人可以使用一个通用DTD来交换数据。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201140831.png"></p>
+<h2 id="DTD文档引用方式"><a href="#DTD文档引用方式" class="headerlink" title="DTD文档引用方式"></a>DTD文档引用方式</h2><ol>
+<li><p>引用内部DTD文档。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE 根元素 [定义内容]&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>引用外部DTD文档。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE 根元素 [定义内容]&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201142414.png"></p>
+</li>
+<li><p>引用内外部DTD文档。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE 根元素 SYSTEM &quot;DTD文档路径&quot; [定义内容]&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>引用公共DTD。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE 根元素名称 PUBLIC &quot;DTD标识名&quot; &quot;公用DTD的URI&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201142448.png"></p>
+</li>
+</ol>
+<h2 id="ENTITY"><a href="#ENTITY" class="headerlink" title="ENTITY"></a><strong>ENTITY</strong></h2><p>用于定义引用普通文本或特殊字符的快捷方式的变量。在文档内可能多处都要用到一样的内容，可以考虑将该这部分内容声明为一个实体，在需要的地方用实体引用来替代。</p>
+<p>实体类型：普通实体、参数实体</p>
+<table>
+<thead>
+<tr>
+<th align="center">类型</th>
+<th align="center">普通实体</th>
+<th align="center">参数实体</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">使用场合</td>
+<td align="center">在DTD中声明，在XML中引用</td>
+<td align="center">在DTD声明和引用</td>
+</tr>
+<tr>
+<td align="center">内部</td>
+<td align="center">&lt;!ENTITY 实体名 “文本内容”&gt;</td>
+<td align="center">&lt;!ENTITY % 实体名 “文本内容”&gt;</td>
+</tr>
+<tr>
+<td align="center">外部</td>
+<td align="center">&lt;!ENTITY 实体名 SYSTEM “外部文件URL地址”&gt;</td>
+<td align="center">&lt;!ENTITY % 实体名 SYSTEM “外部文件URL地址”&gt;</td>
+</tr>
+<tr>
+<td align="center">引用</td>
+<td align="center">&amp;实体名;</td>
+<td align="center">%实体名;</td>
+</tr>
+</tbody></table>
+<p>外部引用可支持很多协议，不同的语言支持的协议不同，有一些协议通用。</p>
+<table>
+<thead>
+<tr>
+<th>libxml2</th>
+<th>php</th>
+<th>java</th>
+<th>.net</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>file<br />http<br />ftp</td>
+<td>file<br />ftp<br />http<br />phar<br />php<br />glob<br />data<br />compress.zlib<br />compress.bzip2</td>
+<td>http<br />https<br />gopher<br />file<br />ftp<br />jar<br />netdoc<br />mailto</td>
+<td>file<br />ftp<br />http<br />https<br /></td>
+</tr>
+</tbody></table>
+<p>普通实体引入外部实体。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201145949.png"></p>
+<p>参数实体引入外部实体。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201150058.png"></p>
+<p>参数实体的特性：只能在DTD内部、立即引用、实体嵌套。</p>
+<p>立即引用即参数实体在DTD中声明后，需要在DTD中完成引用，如上图。</p>
+<p>实体嵌套即在实际使用中通常需要再嵌套一个参数实体。%号是需要处理成&amp;#37或&amp;#x25。若直接利用%，在引用时会报错，找不到该参数实体名称。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201151312.png"></p>
+<p>在内部DTD中，参数实体不能写在标记声明内部。若在参数实体的声明中使用另一个参数实体的话，需要利用外部DTD文件引入的方式。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201151704.png"></p>
+<h1 id="XXE"><a href="#XXE" class="headerlink" title="XXE"></a><strong>XXE</strong></h1><p>XML外部实体注入。</p>
+<p>服务端没有合理处理客户提交的XML文件引用的外部实体，且该实体支持file、ftp等协议的URL，可以通过声明URL指向服务器本地或者内网的实体造成攻击。</p>
+<h1 id="XXE危害"><a href="#XXE危害" class="headerlink" title="XXE危害"></a><strong>XXE危害</strong></h1><p>文件读取、拒绝服务攻击、命令执行、SQL注入、XSS、内网扫描端口、入侵内网站点等。</p>
+<p>两大利用场景：有回显、无回显。</p>
+<p>有回显：可以直接在页面中看到Payload的执行结果或者通过报错获取有用信息</p>
+<p>无回显：又称为Blind XXE。</p>
+<h2 id="读取敏感文件-x2F-列举目录"><a href="#读取敏感文件-x2F-列举目录" class="headerlink" title="读取敏感文件&#x2F;列举目录"></a><strong>读取敏感文件&#x2F;列举目录</strong></h2><p>直接读取本地文件。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201152526.png"></p>
+<p>引入外部实体读取本地文件。有些XML解析库还支持列目录。比如java的file协议，可逐层获取目录结构和文件。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201152620.png"></p>
+<p>若文件中包含”&lt;“或”&amp;”等符号时，XML解析不了，需要改变编码，例如php伪协议。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201153655.png"></p>
+<p>或者在引用的时候利用CDATA给所读文件添加属性：不被解析。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201154101.png"></p>
+<h2 id="入侵内网站点"><a href="#入侵内网站点" class="headerlink" title="入侵内网站点"></a><strong>入侵内网站点</strong></h2><p>利用支持的协议进行内网主机和端口发现。</p>
+<p>端口扫描，看报错信息或响应时间。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201154546.png"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201154609.png"></p>
+<p>拿目标服务器当跳板。解析器对URL有一定限制，只要有回车换行（测试发现php中空格等制表符也不允许），都会被检查为不合法URL，直接拦截这个请求，需要根据情况用其他符号代替。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201155019.png"></p>
+<p>若禁用外部实体引用，大多数攻击会失效，但SSRF不会。可以利用DOCTYPE请求外部资源。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201155211.png"></p>
+<h2 id="拒绝服务攻击"><a href="#拒绝服务攻击" class="headerlink" title="拒绝服务攻击"></a><strong>拒绝服务攻击</strong></h2><p>“billion laughs”攻击，请求复杂的XML定义，在内存中生成大量字符串，耗尽服务器可用内存，导致DoS攻击。</p>
+<p>正常请求。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201155717.png"></p>
+<p>构造恶意代码。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE lolz [</span><br><span class="line">&lt;!ENTITY lol &quot;lol&quot;&gt;</span><br><span class="line">&lt;!ENTITY lol2 &quot;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&quot;&gt;</span><br><span class="line">&lt;!ENTITY lol3 &quot;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&quot;&gt;</span><br><span class="line">&lt;!ENTITY lol4 &quot;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&quot;&gt;</span><br><span class="line">&lt;!ENTITY lol5 &quot;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&quot;&gt;</span><br><span class="line">&lt;!ENTITY lol6 &quot;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&quot;&gt;</span><br><span class="line">&lt;!ENTITY lol7 &quot;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&quot;&gt;</span><br><span class="line">&lt;!ENTITY lol8 &quot;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&quot;&gt;</span><br><span class="line">&lt;!ENTITY lol9 &quot;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&quot;&gt;]&gt;</span><br><span class="line">&lt;lolz&gt;&amp;lol9;&lt;/lolz&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201155727.png"></p>
+<p>与正常请求相比，构造恶意XML使服务器解析变的很慢。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201155747.png"></p>
+<h2 id="执行任意命令"><a href="#执行任意命令" class="headerlink" title="执行任意命令"></a><strong>执行任意命令</strong></h2><p>某些协议可直接执行系统命令，如在安装expect扩展的PHP环境里执行系统命令（这个扩展并不是默认安装的）。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201160111.png"></p>
+<h2 id="文件上传（jar-url协议）"><a href="#文件上传（jar-url协议）" class="headerlink" title="文件上传（jar url协议）"></a><strong>文件上传（jar url协议）</strong></h2><p>无论外部实体是否开启都能进行攻击。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201193152.png"></p>
+<h1 id="XXE高级利用方式"><a href="#XXE高级利用方式" class="headerlink" title="XXE高级利用方式"></a><strong>XXE高级利用方式</strong></h1><h2 id="Blind-XXE"><a href="#Blind-XXE" class="headerlink" title="Blind XXE"></a><strong>Blind XXE</strong></h2><p>若发现没有回显，可能是因为：</p>
+<ol>
+<li>服务器禁止了外部实体引用。</li>
+<li>服务器进行了过滤或者展示限制。</li>
+</ol>
+<p>若是第二种，就可能出现Blind XXE，Blind XXE主要以参数实体为核心，使用OOB在远程服务器上提取文件。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201161823.png"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201161835.png"></p>
+<p>由于不回显，则可以通过HTTP、ftp、gopher等协议OOB。</p>
+<p>Payload：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201162741.png"></p>
+<p>evil.xml：</p>
+<p>其中c也可以换成普通实体写法。XML头可有可无，可能绕过过滤。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201162819.png"></p>
+<p>服务器上监听接受到http数据，base64解码即可。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201162950.png"></p>
+<p>也可以调整一下Payload写法，将数据写入文件输出。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201163016.png"></p>
+<p>或者看服务器日志记录，方法各异。也可以利用dnslog查看数据。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201163202.png"></p>
+<p>更容易获取数据方法，通过加入非法URI到请求上面强制服务器产生错误。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201163310.png"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201163321.png"></p>
+<p>或者在构造不同的外部实体时出现的其他错误。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201163327.png"></p>
+<h2 id="JSON中的XXE"><a href="#JSON中的XXE" class="headerlink" title="JSON中的XXE"></a><strong>JSON中的XXE</strong></h2><p>当WEB服务使用JSON进行传输时，若服务器上的JSON解析器的配置不完善，服务器可能会接收XML数据格式，遭受XXE攻击。ps：不是每一个JSON终端都会接收XML格式。</p>
+<p>用一道CTF题举例，目标是获取&#x2F;home&#x2F;ctf&#x2F;flag.txt的内容。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201165254.png"></p>
+<p>若Content-Type头被修改为application&#x2F;xml，客户端会告诉服务器post过去的数据是XML格式的。若实际传过去的不是该格式的话，服务器不会进行解析，会报错、返回500状态码或返回空数据等，这得看服务器的配置。比如提示”errorMessage:org.xml.sax.SAXParseException: XML document structures must start and end within the same entity.”则表示服务器能够处理XML格式和JSON格式的数据。</p>
+<p>修改Content-Type，将json格式数据转换成XML格式。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201165701.png"></p>
+<p>JSON转换为XML的攻击不会只限制于通过POST传输带有JSON内容的payload，可以尝试利用GET方法传输。</p>
+<h1 id="如何分辨XXE"><a href="#如何分辨XXE" class="headerlink" title="如何分辨XXE"></a><strong>如何分辨XXE</strong></h1><ol>
+<li><p>看能否解析实体，是否有过滤DOCTYPE等关键字。若不能回显有可能是因为构造payload时删除了过多原来的代码导致错误。或者直接使用Blind XXE。</p>
+</li>
+<li><p>看能否引用外部实体。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201190754.png"></p>
+<p>这里服务器可能会报错或者返回空数据返回500等等，但是若HTTP请求能发送出去，这就说明漏洞存在。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210201190805.png"></p>
+</li>
+<li><p>有时候服务器会不支持一般实体的引用，也就是在DTD之外无法引用实体，若这样的话，使用Blind XXE方法。</p>
+</li>
+</ol>
+<h1 id="如何防御"><a href="#如何防御" class="headerlink" title="如何防御"></a><strong>如何防御</strong></h1><ol>
+<li><p>禁用外部实体的引用。</p>
+<p>配置XML处理器去使用本地静态的DTD。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">PHP:</span><br><span class="line">libxml_disable_entity_loader(true)</span><br><span class="line"></span><br><span class="line">JAVA:</span><br><span class="line">DocumentBuilderFactory dbf =DocumentBuilderFactory.newInstance()</span><br><span class="line">dbf.setExpandEntityReferences(false)</span><br><span class="line"></span><br><span class="line">Python：</span><br><span class="line">from lxml import etree</span><br><span class="line">xmlData = etree.parse(xmlSource,etree.XMLParser(resolve_entities=False))</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>过滤用户提交的XML数据。</p>
+<p>使用一个标准DTD模板，校验从外部接受来的XML数据是否有效。过滤如&lt;!DOCTYPE、&lt;!ENTITY、SYSTEM、PUBLIC等关键词。</p>
+</li>
+<li><p>升级Libxml库。</p>
+<p>XML文件的解析依赖libxml库，libxml2.9以前的版本默认支持并开启了外部实体的引用，Libxml2.9默认防御XML外部实体注入。</p>
+</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">V3teran</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://v3teran.github.io/2021/02/01/e93ac459.html">https://v3teran.github.io/2021/02/01/e93ac459.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://V3teran.github.io" target="_blank">V3teran's blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/OOB/">OOB</a><a class="post-meta__tags" href="/tags/XML/">XML</a><a class="post-meta__tags" href="/tags/%E5%A4%96%E9%83%A8%E5%AE%9E%E4%BD%93/">外部实体</a><a class="post-meta__tags" href="/tags/%E5%8D%8F%E8%AE%AE/">协议</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402200352.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2021/02/02/b0919bb1.html"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402200618.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Windows本地Hash获取</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/02/03/5a13bff.html" title="DNS注入简单利用"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402195705.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-03</div><div class="title">DNS注入简单利用</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#XML"><span class="toc-number">1.</span> <span class="toc-text">XML</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#DTD"><span class="toc-number">1.1.</span> <span class="toc-text">DTD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DTD%E6%96%87%E6%A1%A3%E5%BC%95%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">1.2.</span> <span class="toc-text">DTD文档引用方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ENTITY"><span class="toc-number">1.3.</span> <span class="toc-text">ENTITY</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#XXE"><span class="toc-number">2.</span> <span class="toc-text">XXE</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#XXE%E5%8D%B1%E5%AE%B3"><span class="toc-number">3.</span> <span class="toc-text">XXE危害</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%BB%E5%8F%96%E6%95%8F%E6%84%9F%E6%96%87%E4%BB%B6-x2F-%E5%88%97%E4%B8%BE%E7%9B%AE%E5%BD%95"><span class="toc-number">3.1.</span> <span class="toc-text">读取敏感文件&#x2F;列举目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%A5%E4%BE%B5%E5%86%85%E7%BD%91%E7%AB%99%E7%82%B9"><span class="toc-number">3.2.</span> <span class="toc-text">入侵内网站点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB"><span class="toc-number">3.3.</span> <span class="toc-text">拒绝服务攻击</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E4%BB%BB%E6%84%8F%E5%91%BD%E4%BB%A4"><span class="toc-number">3.4.</span> <span class="toc-text">执行任意命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%EF%BC%88jar-url%E5%8D%8F%E8%AE%AE%EF%BC%89"><span class="toc-number">3.5.</span> <span class="toc-text">文件上传（jar url协议）</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#XXE%E9%AB%98%E7%BA%A7%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">4.</span> <span class="toc-text">XXE高级利用方式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Blind-XXE"><span class="toc-number">4.1.</span> <span class="toc-text">Blind XXE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JSON%E4%B8%AD%E7%9A%84XXE"><span class="toc-number">4.2.</span> <span class="toc-text">JSON中的XXE</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%88%86%E8%BE%A8XXE"><span class="toc-number">5.</span> <span class="toc-text">如何分辨XXE</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E9%98%B2%E5%BE%A1"><span class="toc-number">6.</span> <span class="toc-text">如何防御</span></a></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2021 - 2022 <i style="color:#FF6A6A;animation: announ_animation 0.8s linear infinite;" class="fa fa-heartbeat"></i> V3teran</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"></div><script data-pjax src="/js/lalala.js"></script><script src="/live2d-widget/autoload.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="true" data-text="爱国,和谐,友善,富强,敬业,自由,平等,民主" data-fontsize="16px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax>function history_calendar_injector_config(){
+                var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+                var item_html = '<div class="card-widget card-history"><div class="card-content"><div class="item-headline"><i class="fas fa-clock fa-spin"></i><span>那年今日</span></div><div id="history-baidu" style="height: 100px;overflow: hidden"><div class="history_swiper-container" id="history-container" style="width: 100%;height: 100%"><div class="swiper-wrapper" id="history_container_wrapper" style="height:20px"></div></div></div></div>';
+                console.log('已挂载history_calendar')
+                // parent_div_git.innerHTML=item_html+parent_div_git.innerHTML // 无报错，但不影响使用(支持pjax跳转)
+                parent_div_git.insertAdjacentHTML("afterbegin",item_html) // 有报错，但不影响使用(支持pjax跳转)
+            }if( document.getElementsByClassName('sticky_layout')[0] && (location.pathname ==='/'|| '/' ==='all')){
+
+            history_calendar_injector_config()
+        } </script><script data-pjax  src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script><script data-pjax src="https://cdn.jsdelivr.net/gh/Zfour/Butterfly-card-history/baiduhistory/js/main.js"></script><!-- hexo injector body_end end --></body></html>

