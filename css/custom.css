@@ -1,0 +1,368 @@
+/* 版权链接去掉下划线 */
+.layout_post .post-copyright .post-copyright-info a {
+    text-decoration: none;
+}
+
+
+
+
+
+/* 鼠标样式一 */
+/*body {
+    cursor: url(https://cdn.jsdelivr.net/gh/sviptzk/HexoStaticFile@latest/Hexo/img/default.cur),
+        default;
+}
+a,
+img {
+    cursor: url(https://cdn.jsdelivr.net/gh/sviptzk/HexoStaticFile@latest/Hexo/img/pointer.cur),
+        default;
+}
+*/
+
+
+
+
+
+/* 鼠标样式二 */
+body {
+    cursor: url(https://bu.dusays.com/2022/05/17/6283c365d20dd.png), auto;
+}
+
+.hide-block>.hide-button.open,
+.hide-inline>.hide-button.open {
+    display: block
+}
+
+a,
+button,
+img {
+    cursor: url(https://bu.dusays.com/2022/05/17/6283c376afcfc.png), auto
+}
+
+
+
+
+
+/* 背景 */
+/*
+#web_bg {
+  background: -webkit-linear-gradient(
+    0deg,
+    rgba(247, 149, 51, 0.1) 0,
+    rgba(243, 112, 85, 0.1) 15%,
+    rgba(239, 78, 123, 0.1) 30%,
+    rgba(161, 102, 171, 0.1) 44%,
+    rgba(80, 115, 184, 0.1) 58%,
+    rgba(16, 152, 173, 0.1) 72%,
+    rgba(7, 179, 155, 0.1) 86%,
+    rgba(109, 186, 130, 0.1) 100%
+  );
+  background: -moz-linear-gradient(
+    0deg,
+    rgba(247, 149, 51, 0.1) 0,
+    rgba(243, 112, 85, 0.1) 15%,
+    rgba(239, 78, 123, 0.1) 30%,
+    rgba(161, 102, 171, 0.1) 44%,
+    rgba(80, 115, 184, 0.1) 58%,
+    rgba(16, 152, 173, 0.1) 72%,
+    rgba(7, 179, 155, 0.1) 86%,
+    rgba(109, 186, 130, 0.1) 100%
+  );
+  background: -o-linear-gradient(
+    0deg,
+    rgba(247, 149, 51, 0.1) 0,
+    rgba(243, 112, 85, 0.1) 15%,
+    rgba(239, 78, 123, 0.1) 30%,
+    rgba(161, 102, 171, 0.1) 44%,
+    rgba(80, 115, 184, 0.1) 58%,
+    rgba(16, 152, 173, 0.1) 72%,
+    rgba(7, 179, 155, 0.1) 86%,
+    rgba(109, 186, 130, 0.1) 100%
+  );
+  background: -ms-linear-gradient(
+    0deg,
+    rgba(247, 149, 51, 0.1) 0,
+    rgba(243, 112, 85, 0.1) 15%,
+    rgba(239, 78, 123, 0.1) 30%,
+    rgba(161, 102, 171, 0.1) 44%,
+    rgba(80, 115, 184, 0.1) 58%,
+    rgba(16, 152, 173, 0.1) 72%,
+    rgba(7, 179, 155, 0.1) 86%,
+    rgba(109, 186, 130, 0.1) 100%
+  );
+  background: linear-gradient(
+    90deg,
+    rgba(247, 149, 51, 0.1) 0,
+    rgba(243, 112, 85, 0.1) 15%,
+    rgba(239, 78, 123, 0.1) 30%,
+    rgba(161, 102, 171, 0.1) 44%,
+    rgba(80, 115, 184, 0.1) 58%,
+    rgba(16, 152, 173, 0.1) 72%,
+    rgba(7, 179, 155, 0.1) 86%,
+    rgba(109, 186, 130, 0.1) 100%
+  );
+}
+*/
+
+
+
+
+/* 页脚透明 */
+
+#footer {
+    background: transparent !important;
+}
+
+
+
+
+
+/* 头图透明 */
+/* #page-header{
+    background: transparent!important;
+} */
+
+/*top-img黑色透明玻璃效果移除，不建议加，除非你执着于完全一图流或者背景图对比色明显 */
+/* #page-header.post-bg:before {
+  background-color: transparent!important;
+} */
+
+
+
+
+
+/*夜间模式伪类遮罩层透明*/
+/*[data-theme="dark"] #footer::before{
+  background: transparent!important;
+}
+[data-theme="dark"] #page-header::before{
+  background: transparent!important;
+}*/
+
+
+
+
+
+/* 滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: rgba(73, 177, 245, 0.2);
+  border-radius: 2em;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(73, 177, 245, 0.3);
+  /* background-color: #49b1f5; */
+  /* background-image: -webkit-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.4) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0.4) 75%,
+    transparent 75%,
+    transparent
+  ); */
+  background-image: -webkit-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.1) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.1) 75%,
+    transparent 75%,
+    transparent
+  );
+  border-radius: 2em;
+}
+
+::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+
+::-moz-selection {
+  /* color: #fff;
+  background-color: #49b1f5; */
+  color: rgb(255 255 255 / .3);
+  background-color: rgba(73, 177, 245, .2); 
+}
+
+
+
+
+/* 文章透明度 
+div#post{
+  background: rgba(255, 255, 255, 0.9);
+}
+div#page{
+  background: rgba(255, 255, 255, 0.9);
+}
+div#archive{
+  background: rgba(255, 255, 255, 0.9);
+}
+div#tag{
+  background: rgba(255, 255, 255, 0.9);
+}
+div#category{
+  background: rgba(255, 255, 255, 0.9);
+}
+*/
+
+
+
+
+/* 侧面板块透明度 
+#aside-content .card-widget{
+  background: rgba(255, 255, 255, 0.9);
+}
+*/
+
+
+
+
+/* 首页文章列表透明度 
+#recent-posts .recent-post-item{
+  background: rgba(255, 255, 255, 0.9);
+}
+*/
+
+
+
+/* 博主昵称颜色 
+.author-info__name {
+    color: #ff7242;
+}
+*/
+
+
+
+/* 首页中间打字颜色 
+#subtitle{
+    color: #CCFFFF;
+}
+ */
+
+
+
+/* 顶部导航栏颜色  
+#nav a {
+    color: #CCFFFF;
+}
+*/
+
+
+
+
+/* #80bdab */
+/* 作者名字颜色 
+#site-title {
+                
+	opacity:0; 
+} */
+
+
+
+
+/* 渐变格言颜色 
+#subtitle {
+	border-top-right-radius: 10px;
+	border-top-left-radius: 10px;
+	background: linear-gradient(-45deg,#ee7752,#ce3e75,#23a6d5,#23d5ab);
+	background-size: 400% 400%;
+	-webkit-animation: Gradient 10s ease infinite;
+	-moz-animation: Gradient 10s ease infinite;
+	animation: Gradient 10s ease infinite;
+	-o-user-select: none;
+	-ms-user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+*/
+
+
+
+
+/* 页脚logo颜色 */
+.copyright {
+	color: #e58a8a;
+}
+
+
+
+
+
+/* 文章标题图标旋转 */
+#article-container.post-content h1:before,h2:before,h3:before,h4:before,h5:before,h6:before {
+	-webkit-animation: avatar_turn_around 1s linear infinite;
+	-moz-animation: avatar_turn_around 1s linear infinite;
+	-o-animation: avatar_turn_around 1s linear infinite;
+	-ms-animation: avatar_turn_around 1s linear infinite;
+	animation: avatar_turn_around 1s linear infinite;
+}
+
+
+/* 字体 */
+@font-face {
+    font-family: 'tzy';
+    /* 字体名自定义即可 */
+    /* src: url('https://cdn.jsdelivr.net/gh/tzy13755126023/BLOG_SOURCE/font/ZhuZiAWan.woff2'); */
+    src: url('https://npm.elemecdn.com/ethan4116-blog/lib/font/ZhuZiAWan.ttf');
+    /* 字体文件路径 */
+    font-display: swap;
+}
+
+body,
+.gitcalendar {
+    font-family: tzy !important;
+}
+
+
+
+/*适配使用-webkit内核的浏览器 */
+@-webkit-keyframes imgblur {
+    0% {
+        -webkit-filter: blur(5px);
+    }
+    100% {
+        -webkit-filter: blur(0px);
+    }
+}
+.table-wrap img {
+    margin: .6rem auto .1rem !important;
+}
+
+
+
+
+
+/* 代码块颜色 */
+figure.highlight pre .addition {
+    color: #00bf03 !important;
+}
+
+
+
+
+/*3s为加载动画的时间，1为加载动画的次数，ease-in-out为动画效果*/
+#page-header,
+#web_bg {
+    -webkit-animation: imgblur 2s 1 ease-in-out;
+    animation: imgblur 2s 1 ease-in-out;
+}
+
+@keyframes imgblur {
+    0% {
+        filter: blur(5px);
+    }
+    100% {
+        filter: blur(0px);
+    }
+}
+
