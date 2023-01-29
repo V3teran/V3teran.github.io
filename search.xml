@@ -782,9 +782,9 @@
             
             <tag> Hash </tag>
             
-            <tag> LSASS </tag>
-            
             <tag> NTLM </tag>
+            
+            <tag> LSASS </tag>
             
         </tags>
       
